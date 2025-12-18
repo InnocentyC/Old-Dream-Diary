@@ -4,87 +4,94 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("ÒÆ¶¯ÉèÖÃ")]
+    [Header("ç§»åŠ¨è®¾ç½®")]
     public float speed = 5f;
 
-    [Header("µØÍ¼±ß½çÏŞÖÆ")]
+    [Header("åœ°å›¾è¾¹ç•Œé™åˆ¶")]
     public GameObject background; 
-    private float minX; // ×ó±ß
-    private float maxX;  // ÓÒ±ß
+    private float minX; // å·¦è¾¹
+    private float maxX;  // å³è¾¹
 
     private Rigidbody2D rb;
     private SpriteRenderer mySpriteRenderer; 
+    private Animator animator;
     private Vector2 movement;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        mySpriteRenderer = GetComponent<SpriteRenderer>(); 
+        mySpriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>(); 
 
-     // --- ×Ô¶¯¼ÆËã±ß½çµÄºËĞÄÂß¼­ ---
+     // --- è‡ªåŠ¨è®¡ç®—è¾¹ç•Œçš„æ ¸å¿ƒé€»è¾‘ ---
         if (background != null)
         {
-            // 1. »ñÈ¡±³¾°ºÍÖ÷½ÇµÄäÖÈ¾Æ÷ (Renderer)
+            // 1. è·å–èƒŒæ™¯å’Œä¸»è§’çš„æ¸²æŸ“å™¨ (Renderer)
           
             Renderer bgRenderer = background.GetComponent<Renderer>();
             Renderer playerRenderer = GetComponent<Renderer>();
 
             if (bgRenderer != null && playerRenderer != null)
             {
-                // 2. »ñÈ¡Ö÷½ÇµÄÒ»°ë¿í¶È (extents.x ¾ÍÊÇÎïÌå¿í¶ÈµÄÒ»°ë)
+                // 2. è·å–ä¸»è§’çš„ä¸€åŠå®½åº¦ (extents.x å°±æ˜¯ç‰©ä½“å®½åº¦çš„ä¸€åŠ)
                 float playerHalfWidth = playerRenderer.bounds.extents.x;
 
-                // 3. ¼ÆËã×ó±ß½ç£º±³¾°µÄ×î×ó±ß + Ö÷½Ç°ë¿í
-                // bounds.min.x ÊÇÎïÌåÔÚÊÀ½ç×ø±êÖĞ×î×ó±ßµÄµã
+                // 3. è®¡ç®—å·¦è¾¹ç•Œï¼šèƒŒæ™¯çš„æœ€å·¦è¾¹ + ä¸»è§’åŠå®½
+                // bounds.min.x æ˜¯ç‰©ä½“åœ¨ä¸–ç•Œåæ ‡ä¸­æœ€å·¦è¾¹çš„ç‚¹
                 minX = bgRenderer.bounds.min.x + playerHalfWidth;
 
-                // 4. ¼ÆËãÓÒ±ß½ç£º±³¾°µÄ×îÓÒ±ß - Ö÷½Ç°ë¿í
-                // bounds.max.x ÊÇÎïÌåÔÚÊÀ½ç×ø±êÖĞ×îÓÒ±ßµÄµã
+                // 4. è®¡ç®—å³è¾¹ç•Œï¼šèƒŒæ™¯çš„æœ€å³è¾¹ - ä¸»è§’åŠå®½
+                // bounds.max.x æ˜¯ç‰©ä½“åœ¨ä¸–ç•Œåæ ‡ä¸­æœ€å³è¾¹çš„ç‚¹
                 maxX = bgRenderer.bounds.max.x - playerHalfWidth;
 
-                Debug.Log($"±ß½çÒÑ×Ô¶¯¼ÆËã: ×ó {minX} / ÓÒ {maxX}");
+                Debug.Log($"è¾¹ç•Œå·²è‡ªåŠ¨è®¡ç®—: å·¦ {minX} / å³ {maxX}");
             }
             else
             {
-                Debug.LogError("´íÎó£º±³¾°»òÖ÷½ÇÈ±ÉÙ Renderer ×é¼ş£¡");
+                Debug.LogError("é”™è¯¯ï¼šèƒŒæ™¯æˆ–ä¸»è§’ç¼ºå°‘ Renderer ç»„ä»¶ï¼");
             }
         }
         else
         {
-            Debug.LogError("ÇëÔÚ Inspector Ãæ°åÖĞ°Ñ¡¾±³¾°ÎïÌå¡¿ÍÏ½øÈ¥£¡");
+            Debug.LogError("è¯·åœ¨ Inspector é¢æ¿ä¸­æŠŠã€èƒŒæ™¯ç‰©ä½“ã€‘æ‹–è¿›å»ï¼");
         }
     }
 
     void Update()
     {
-        // 1. ½ÓÊÕÊäÈë£¬²»´¦ÀíÎïÀíÒÆ¶¯
-   
-        movement.x = Input.GetAxisRaw("Horizontal");
+        // 1. æ¥æ”¶è¾“å…¥ï¼Œä¸å¤„ç†ç‰©ç†ç§»åŠ¨
+        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        movement.x = horizontalInput;
         movement.y = 0;
 
-        // 2. ´¦ÀíÈËÎï·­×ª 
-        if (movement.x != 0)
-        {
-           
-            mySpriteRenderer.flipX = movement.x < 0;
-        }
+        // 2. åŠ¨ç”»æ§åˆ¶ï¼šç«‹å³å“åº”ï¼Œæ— å»¶è¿Ÿ
+        bool isWalking = horizontalInput != 0;
+        animator.SetBool("IsWalking", isWalking);
         
+        // 3. å¤„ç†äººç‰©ç¿»è½¬ 
+        if (horizontalInput != 0)
+        {
+            mySpriteRenderer.flipX = horizontalInput > 0;
+        }
     }
     void FixedUpdate()
     {
-        // 3. ¼ÆËãÔ­±¾Ó¦¸ÃÒÆ¶¯µ½µÄÎ»ÖÃ
-        Vector2 targetPos = rb.position + movement * speed * Time.fixedDeltaTime;
-
-        // 4. ÏŞÖÆ·¶Î§ (Clamp)
+        // ç›´æ¥è®¾ç½®é€Ÿåº¦ï¼Œé¿å…æ»‘å†°æ•ˆæœ
+        Vector2 velocity = new Vector2(movement.x * speed, rb.velocity.y);
         
-        targetPos.x = Mathf.Clamp(targetPos.x, minX, maxX);
+        // åº”ç”¨é€Ÿåº¦
+        rb.velocity = velocity;
 
-        // 5. ×îÖÕÓ¦ÓÃÒÆ¶¯
-        // »¹ÒªËø¶¨ Y ÖáÎ»ÖÃ£¬·ÀÖ¹ÎïÀíÅö×²µ¼ÖÂ±»¼·ÉÏÈ¥
-        // Èç¹ûÄãµÄ³¡¾°ÊÇ´¿Æ½µØ£¬¿ÉÒÔ±£³Öµ±Ç°µÄ Y ÖáÎ»ÖÃ
-        targetPos.y = rb.position.y;
-
-        rb.MovePosition(targetPos);
+        // é™åˆ¶ä½ç½®èŒƒå›´
+        Vector2 clampedPos = rb.position;
+        clampedPos.x = Mathf.Clamp(clampedPos.x, minX, maxX);
+        
+        // å¦‚æœè¶…å‡ºè¾¹ç•Œï¼Œå¼ºåˆ¶ä¿®æ­£ä½ç½®
+        if (Mathf.Abs(clampedPos.x - rb.position.x) > 0.01f)
+        {
+            rb.position = clampedPos;
+            rb.velocity = new Vector2(0, rb.velocity.y);
+        }
     }
 
 
