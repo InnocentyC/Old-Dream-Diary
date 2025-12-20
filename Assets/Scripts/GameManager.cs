@@ -1,127 +1,130 @@
 using UnityEngine;
-using System.Collections;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+    public DialogueManager dialogueManager;
+    public SceneTransitionManager sceneTransitionManager;
+    public TaskManager taskManager;
+    public InteractableItem interactableItem;
 
-    [Header("UI×é¼ş")]
-    public Image transitionPanel; // ×ª³¡ºÚÆÁ
+    public Sprite Playerportrait1;//åˆ‡æ¢ä¸åŒç«‹ç»˜è¡¨æƒ…
+    private bool allInteractionsCompleted = false;
 
-    [Header("ÈÎÎñ½ø¶È")]
-    public int passwordFound = 0;
-    public int diaryFound = 0;
-
-    // ×´Ì¬Ëø£¬·ÀÖ¹ÖØ¸´´¥·¢
-    private bool isFishDone = false;
-    private bool isDollDone = false;
-    private bool isAwardDone = false;
-    private bool isBeadsDone = false;
-
-    void Awake()
+    private void Awake()
     {
-        Instance = this;
-    }
-
-    void Start()
-    {
-        StartCoroutine(IntroSequence());
-    }
-
-    // === ºËĞÄ£º½ÓÊÕÎïÆ·µÄµç»° ===
-    public void HandleInteraction(ItemType type)
-    {
-        Debug.Log("Íæ¼Òµã»÷ÁË£º" + type); // ²âÊÔÓÃ
-
-        switch (type)
+        if (Instance == null)
         {
-            case ItemType.Bed:
-                if (passwordFound >= 3 && diaryFound >= 1)
-                {
-                    StartCoroutine(EndingSequence());
-                }
-                else
-                {
-                    UIManager.Instance.ShowDialogue("ÕâÀïÌù×ÅÊ²Ã´£¿(Ò²ĞíÎÒ¸ÃÕÒÕÒÆäËûÏßË÷)");
-                }
-                break;
-
-            case ItemType.Note:
-                UIManager.Instance.ShowItemDetail(true);
-                UIManager.Instance.ShowDialogue("ÎÒ»­µÄ»­...ºÃÏñÊÇ¾É¼ÒÀïµÄ¾°¹Û¡£");
-                StartCoroutine(CloseItemDelay(3f));
-                break;
-
-            case ItemType.FishTank:
-                UIManager.Instance.ShowDialogue("ÈÈ´øÓã...Ò»¹²ÓĞÎåÌõ£¬µÚÒ»¸öÃÜÂëÊÇ 5¡£");
-                if (!isFishDone)
-                {
-                    passwordFound++;
-                    isFishDone = true;
-                    CheckPasswordComplete();
-                }
-                break;
-
-            case ItemType.Doll:
-                UIManager.Instance.ShowDialogue("´²ÉÏÓĞÁ½Ö»ÍæÅ¼...ÕâÓ¦¸ÃÊÇµÚ¶ş¸öÃÜÂë¡£");
-                if (!isDollDone)
-                {
-                    passwordFound++;
-                    isDollDone = true;
-                    CheckPasswordComplete();
-                }
-                break;
-
-            case ItemType.Award:
-                UIManager.Instance.ShowDialogue("Ò»¹² 8 ÕÅ½±×´...ÕâÊÇµÚÈı¸öÃÜÂë¡£");
-                if (!isAwardDone)
-                {
-                    passwordFound++;
-                    isAwardDone = true;
-                    CheckPasswordComplete();
-                }
-                break;
-
-            case ItemType.Beads:
-                UIManager.Instance.ShowDialogue("´®Öé...ÎÒ¿´¼ûÉÁÉÁ·¢¹âµÄÎ´À´¡£");
-                if (!isBeadsDone)
-                {
-                    diaryFound++;
-                    isBeadsDone = true;
-                    UIManager.Instance.UpdateTaskUI(passwordFound, diaryFound);
-                }
-                break;
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
         }
     }
 
-    // --- ¸¨ÖúÂß¼­ ---
-    void CheckPasswordComplete()
+    private void Start()
     {
-        UIManager.Instance.UpdateTaskUI(passwordFound, diaryFound);
-        if (passwordFound == 3) Debug.Log("ÃÜÂëÊÕ¼¯Íê³É£¡");
+        // æ’­æ”¾åèµ·åŠ¨ç”»
+        // indObjectOfType<PlayerAnimationController>().PlaySitUpAnimation();
+
+        // å¼€åœºå¯¹ç™½
+        StartDialogueSequence();
     }
 
-    IEnumerator CloseItemDelay(float delay)
+    //å¼€åœºå¯¹ç™½----------------------------------------------------------------------
+    private void StartDialogueSequence()
     {
-        yield return new WaitForSeconds(delay);
-        UIManager.Instance.ShowItemDetail(false);
+        var openingDialogue = new DialogueSession
+        {
+            lines = new DialogueLine[]
+            {
+                new DialogueLine{speakerName ="ä¸»æ§", text ="æˆ‘å°æ—¶å€™çš„æˆ¿é—´ï¼Ÿ...æˆ‘å¥½åƒè¿˜å˜å°äº†ã€‚",portrait = Playerportrait1 }
+            }
+        };
+
+        dialogueManager.StartDialogue(openingDialogue, OnDialogueFinished);
+    }
+    private void OnDialogueFinished()
+    {
+        Debug.Log("å¯¹è¯ç»“æŸï¼");
     }
 
-    IEnumerator IntroSequence()
+
+    //äº¤äº’é€»è¾‘------------------------------------------------------------------------------
+    public void OnItemInteracted(ItemType itemType)
     {
-        // ¿ª³¡Âß¼­...
-        yield return null;
+        switch (itemType)
+        {
+            case ItemType.NoteBook:
+                // æ‰¾åˆ°å¯†ç æœ¬çš„ä¸€éƒ¨åˆ†
+                Debug.Log("æ‰¾åˆ°å¯†ç æœ¬çš„ä¸€éƒ¨åˆ†ï¼");
+                taskManager.FindPasswordPiece();
+                break;
+
+            case ItemType.Note:
+                // æ‰¾åˆ°ä¾¿åˆ©è´´ï¼ˆå‡è®¾è¿™æ˜¯æ—¥è®°çš„ä¸€éƒ¨åˆ†ï¼‰
+                Debug.Log("æ‰¾åˆ°ä¾¿åˆ©è´´ï¼");
+                taskManager.FindDiary();
+                break;
+
+            case ItemType.Bed:
+                // åºŠå¯èƒ½æ²¡æœ‰ä»»åŠ¡ï¼Œåªæ˜¾ç¤ºå¯¹è¯æˆ–å…¶ä»–é€»è¾‘
+                Debug.Log("åºŠæ²¡æœ‰ä»»åŠ¡ï¼Œåªæ˜¯è§¦å‘äº†å¯¹è¯ã€‚");
+                break;
+
+            case ItemType.FishTank:
+                // ç‰¹æ®Šç‰©å“äº¤äº’é€»è¾‘
+                Debug.Log("è§¦å‘äº†é±¼ç¼¸çš„äº¤äº’é€»è¾‘ï¼");
+                break;
+
+            case ItemType.Doll:
+                Debug.Log("è§¦å‘äº†ç†Šç©å¶çš„äº¤äº’é€»è¾‘ï¼");
+                break;
+
+            case ItemType.Award:
+                Debug.Log("è§¦å‘äº†å¥–çŠ¶çš„äº¤äº’é€»è¾‘ï¼");
+                break;
+
+            case ItemType.Beads:
+                Debug.Log("è§¦å‘äº†ä¸²ç çš„äº¤äº’é€»è¾‘ï¼");
+                break;
+
+            default:
+                Debug.LogWarning($"æœªå¤„ç†çš„ç‰©å“ç±»å‹: {itemType}");
+                break;
+        }
+
+        // æ£€æŸ¥ä»»åŠ¡æ˜¯å¦å®Œæˆ
+        CheckTasks();
+    }
+    private void CheckTasks()
+    {
+        if (taskManager.AreAllTasksCompleted())
+        {
+            Debug.Log("æ‰€æœ‰ä»»åŠ¡å®Œæˆï¼å‡†å¤‡åˆ‡æ¢åˆ°ä¸‹ä¸€åœºæ™¯ã€‚");
+
+            // è®¾ç½®ä¸‹ä¸€åœºæ™¯å¹¶è§¦å‘åœºæ™¯åˆ‡æ¢
+            sceneTransitionManager.SetNextScene("NextSceneName"); // æ›¿æ¢ä¸ºä½ çš„åœºæ™¯åç§°
+            sceneTransitionManager.TransitionToNextScene();
+        }
     }
 
-    IEnumerator EndingSequence()
+    public void CheckInteractions()
     {
-        UIManager.Instance.ShowDialogue("ÎÒÕæµÄºÜÏ²»¶ÈÈ´øÓã°¡...");
-        yield return new WaitForSeconds(3f);
-        if (transitionPanel != null) transitionPanel.gameObject.SetActive(true);
-        yield return new WaitForSeconds(2f);
-        SceneManager.LoadScene("Script5");
+        if (AllInteractionsCompleted())
+        {
+            allInteractionsCompleted = true;
+
+
+            sceneTransitionManager.TransitionToNextScene();
+        }
+    }
+
+    private bool AllInteractionsCompleted()
+    {
+        return taskManager.AreAllTasksCompleted();
     }
 }

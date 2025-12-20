@@ -1,55 +1,87 @@
 using UnityEngine;
-using TMPro; 
-using System.Collections;
+using UnityEngine.UI;
+using System;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    public static UIManager Instance; // 单例模式，方便全局调用
+    public static UIManager Instance;
 
-    [Header("UI 组件")]
-    public TextMeshProUGUI taskText;
-    public GameObject dialoguePanel;
-    public TextMeshProUGUI dialogueText;
-    public GameObject itemPanel; // 用于显示放大物品
+    [Header("弹板 UI 组件")]
+    public GameObject cluePanel;   // 弹板整体
+    public Image clueImage;        // 弹板里的图片
+    public Button closeButton;     // 关闭按钮
+
+    [Header("任务UI")]
+    public TextMeshProUGUI passwordTaskText; // 密码任务的文本框
+    public TextMeshProUGUI diaryTaskText;    // 日记任务的文本框
+
+    private Action onCloseCallback; // 关闭弹板后要做的事
 
     private void Awake()
     {
-        Instance = this;
-        dialoguePanel.SetActive(false);
-        itemPanel.SetActive(false);
-    }
+        if (Instance == null) Instance = this;
 
-    // 更新左上角任务
-    public void UpdateTaskUI(int passwordCount, int diaryCount)
-    {
-        string task1 = $"找到 {passwordCount} / 3 位密码 " + (passwordCount >= 3 ? "√" : "");
-        string task2 = $"找回 {diaryCount} / 1 篇日记 " + (diaryCount >= 1 ? "√" : "");
-        taskText.text = task1 + "\n" + task2;
-    }
+        if (cluePanel != null) cluePanel.SetActive(false);
 
-    // 显示对话（打字机效果）
-    public void ShowDialogue(string content, float duration = 3f)
-    {
-        StopAllCoroutines();
-        StartCoroutine(TypeDialogue(content, duration));
-    }
-
-    IEnumerator TypeDialogue(string content, float duration)
-    {
-        dialoguePanel.SetActive(true);
-        dialogueText.text = "";
-        foreach (char letter in content.ToCharArray())
+        // 绑定关闭按钮事件
+        if (closeButton != null)
         {
-            dialogueText.text += letter;
-            yield return new WaitForSeconds(0.05f);//打字效果速度
+            closeButton.onClick.AddListener(CloseCluePanel);
         }
-        yield return new WaitForSeconds(10f);//对话展示时间——这里之后改成点击才换
-        dialoguePanel.SetActive(false); // 对话结束后关闭
+    }
+    private void Start()
+    {
+        // 确保面板关闭
+        if (cluePanel != null) cluePanel.SetActive(false);
+
+        // 监听关闭按钮点击事件
+        if (closeButton != null)
+        {
+            closeButton.onClick.AddListener(() =>
+            {
+                CloseCluePanel();
+            });
+        }
+    }
+    // 显示弹板
+    public void ShowClue(Sprite clueSprite, Action callback = null)
+    {
+        if (cluePanel != null)
+        {
+            cluePanel.SetActive(true);
+        }
+
+        if (clueImage != null && clueSprite != null)
+        {
+            clueImage.sprite = clueSprite;
+        }
+
+        onCloseCallback = callback; // 记住关闭时要干嘛（比如开始对话）
     }
 
-    // 显示物品大图（简化版，只开关面板）
-    public void ShowItemDetail(bool show)
+    // 关闭弹板
+    public void CloseCluePanel()
     {
-        itemPanel.SetActive(show);
+        if (cluePanel != null && cluePanel.activeSelf)
+        {
+            cluePanel.SetActive(false);
+
+            // 执行回调（通常是开始对话）
+            onCloseCallback?.Invoke();
+            onCloseCallback = null;
+        }
+    }
+    // 更新任务UI的方法
+    public void UpdateTaskUI(string taskDescription, bool isPasswordTask = true)
+    {
+        if (isPasswordTask && passwordTaskText != null)
+        {
+            passwordTaskText.text = taskDescription; // 更新密码任务文本
+        }
+        else if (!isPasswordTask && diaryTaskText != null)
+        {
+            diaryTaskText.text = taskDescription; // 更新日记任务文本
+        }
     }
 }

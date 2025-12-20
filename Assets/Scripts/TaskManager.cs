@@ -1,33 +1,51 @@
 using UnityEngine;
 using UnityEngine.UI;
-
+using TMPro;
 public class TaskManager : MonoBehaviour
 {
-    public Text taskText;
-    private int passwordsFound = 0;
-    private int totalPasswords = 3;
-    private int diariesFound = 0;
-    private int totalDiaries = 1;
+    public TextMeshProUGUI passwordTaskText;
+    public TextMeshProUGUI diaryTaskText;
 
-    void Start()
+    private int passwordPiecesFound = 0;
+    private int diaryFound = 0;
+
+    private const int PASSWORD_TOTAL = 3;
+    private const int DIARY_TOTAL = 1;
+
+    private void Start()
     {
         UpdateTaskUI();
     }
 
-    public void AddPasswordFound()
+    public void FindPasswordPiece()
     {
-        passwordsFound++;
+        passwordPiecesFound++;
         UpdateTaskUI();
     }
 
-    public void AddDiaryFound()
+    public void FindDiary()
     {
-        diariesFound++;
+        diaryFound++;
         UpdateTaskUI();
     }
 
     private void UpdateTaskUI()
     {
-        taskText.text = $"找到 {passwordsFound} / {totalPasswords} 位密码\n找回 {diariesFound} / {totalDiaries} 篇日记";
+        passwordTaskText.text = $"找到 {passwordPiecesFound} / {PASSWORD_TOTAL}位密码";
+        diaryTaskText.text = $"找回 {diaryFound} / {DIARY_TOTAL}篇日记";
+
+        if (passwordPiecesFound == PASSWORD_TOTAL)
+        {
+            passwordTaskText.text += " √";
+        }
+
+        if (diaryFound == DIARY_TOTAL)
+        {
+            diaryTaskText.text += " √";
+        }
+    }
+    public bool AreAllTasksCompleted()
+    {
+        return passwordPiecesFound == PASSWORD_TOTAL && diaryFound == DIARY_TOTAL;
     }
 }

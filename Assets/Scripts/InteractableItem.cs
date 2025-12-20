@@ -5,77 +5,77 @@ public enum ItemType
     Bed,
     Note,
     FishTank,
-    Doll,  //ĞÜÍæÅ¼
+    Doll,  //ç†Šç©å¶
     Award,
-    Beads  //´®Öé
+    Beads  //ä¸²ç 
 
 }
 
 public class InteractableItem : MonoBehaviour
 {
-    [Header("ÉèÖÃ")]
-    public ItemType type; // ÔÚInspectorÀïÑ¡ËüÊÇÄÄÖÖÎïÆ·
-    public GameObject questionMarkIcon; // ÍÏÈëÍ·¶¥µÄ¡°ÎÊºÅ¡±Ğ¡Í¼±ê¶ÔÏó
+    [Header("è®¾ç½®")]
+    public ItemType type; // åœ¨Inspectoré‡Œé€‰å®ƒæ˜¯å“ªç§ç‰©å“
+    public GameObject questionMarkIcon; // æ‹–å…¥å¤´é¡¶çš„â€œé—®å·â€å°å›¾æ ‡å¯¹è±¡
 
-    private bool canInteract = false; // ¿ª¹Ø£ºÖ»ÓĞ¿¿½üÁË²ÅÄÜµã
+    private bool canInteract = false; // å¼€å…³ï¼šåªæœ‰é è¿‘äº†æ‰èƒ½ç‚¹
 
     void Start()
     {
-        // ÓÎÏ·¿ªÊ¼Ê±Òş²ØÎÊºÅ
+        // æ¸¸æˆå¼€å§‹æ—¶éšè—é—®å·
         if (questionMarkIcon != null)
             questionMarkIcon.SetActive(false);
     }
 
-    // === 1. Êó±êµã»÷¼ì²â ===
-    // Unity ×Ô´ø·½·¨£ºµ±Êó±êµã»÷Õâ¸öÎïÌåµÄ Collider Ê±´¥·¢
+    // === 1. é¼ æ ‡ç‚¹å‡»æ£€æµ‹ ===
+    // Unity è‡ªå¸¦æ–¹æ³•ï¼šå½“é¼ æ ‡ç‚¹å‡»è¿™ä¸ªç‰©ä½“çš„ Collider æ—¶è§¦å‘
     private void OnMouseDown()
     {
-        Debug.Log("1. Êó±êµã»÷µ½ÁËÎïÌå£º" + gameObject.name); // Èç¹ûÕâ¾ä»°Ã»´òÓ¡£¬ËµÃ÷Êó±ê±»UIµ²×¡ÁË£¬»òÕßÃ»µãÖĞCollider
+        Debug.Log("1. é¼ æ ‡ç‚¹å‡»åˆ°äº†ç‰©ä½“ï¼š" + gameObject.name); // å¦‚æœè¿™å¥è¯æ²¡æ‰“å°ï¼Œè¯´æ˜é¼ æ ‡è¢«UIæŒ¡ä½äº†ï¼Œæˆ–è€…æ²¡ç‚¹ä¸­Collider
         if (canInteract)
         {
-            Debug.Log("2. Íæ¼ÒÔÚ·¶Î§ÄÚ£¬×¼±¸´¥·¢¾çÇé...");
+            Debug.Log("2. ç©å®¶åœ¨èŒƒå›´å†…ï¼Œå‡†å¤‡è§¦å‘å‰§æƒ…...");
 
             if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
             {
-                Debug.Log("3. ¾¯¸æ£ºÊó±êËäÈ»µãµ½ÁËÎïÌå£¬µ«ÓÉÓÚUIÕÚµ²£¬²Ù×÷±»À¹½ØÁË£¡");
+                Debug.Log("3. è­¦å‘Šï¼šé¼ æ ‡è™½ç„¶ç‚¹åˆ°äº†ç‰©ä½“ï¼Œä½†ç”±äºUIé®æŒ¡ï¼Œæ“ä½œè¢«æ‹¦æˆªäº†ï¼");
                 return;
             }
 
             if (GameManager.Instance != null)
             {
-                Debug.Log("4. ·¢ËÍÇëÇó¸ø GameManager: " + type);
+                Debug.Log("4. å‘é€è¯·æ±‚ç»™ GameManager: " + type);
                 GameManager.Instance.HandleInteraction(type);
             }
             else
             {
-                Debug.LogError("5. ÖÂÃü´íÎó£º³¡¾°ÀïÕÒ²»µ½ GameManager£¡Çë¼ì²éÊÇ·ñ¹ÒÔØÁË GameManager ½Å±¾¡£");
+                Debug.LogError("5. è‡´å‘½é”™è¯¯ï¼šåœºæ™¯é‡Œæ‰¾ä¸åˆ° GameManagerï¼è¯·æ£€æŸ¥æ˜¯å¦æŒ‚è½½äº† GameManager è„šæœ¬ã€‚");
             }
         }
         else
         {
-            Debug.Log("Íæ¼Ò¾àÀëÌ«Ô¶£¬ÎŞ·¨»¥¶¯¡£");
+            Debug.Log("ç©å®¶è·ç¦»å¤ªè¿œï¼Œæ— æ³•äº’åŠ¨ã€‚");
         }
     }
 
-    // === 2. Íæ¼Ò½øÈë·¶Î§ ===
+    // === 2. ç©å®¶è¿›å…¥èŒƒå›´ ===
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player")) // È·±£ÊÇÍæ¼ÒÅöµ½ÁË
+        if (collision.CompareTag("Player")) // ç¡®ä¿æ˜¯ç©å®¶ç¢°åˆ°äº†
         {
             canInteract = true;
             if (questionMarkIcon != null)
-                questionMarkIcon.SetActive(true); // ÁÁÆğÎÊºÅ
+                questionMarkIcon.SetActive(true); // äº®èµ·é—®å·
         }
     }
 
-    // === 3. Íæ¼ÒÀë¿ª·¶Î§ ===
+    // === 3. ç©å®¶ç¦»å¼€èŒƒå›´ ===
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
             canInteract = false;
             if (questionMarkIcon != null)
-                questionMarkIcon.SetActive(false); // Ï¨ÃğÎÊºÅ
+                questionMarkIcon.SetActive(false); // ç†„ç­é—®å·
         }
     }
 
