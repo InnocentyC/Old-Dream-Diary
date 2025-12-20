@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -31,17 +32,17 @@ public class TaskManager : MonoBehaviour
 
     private void UpdateTaskUI()
     {
-        passwordTaskText.text = $"ÕÒµ½ {passwordPiecesFound} / {PASSWORD_TOTAL}Î»ÃÜÂë";
-        diaryTaskText.text = $"ÕÒ»Ø {diaryFound} / {DIARY_TOTAL}ÆªÈÕ¼Ç";
+        passwordTaskText.text = $"ï¿½Òµï¿½ {passwordPiecesFound} / {PASSWORD_TOTAL}Î»ï¿½ï¿½ï¿½ï¿½";
+        diaryTaskText.text = $"ï¿½Ò»ï¿½ {diaryFound} / {DIARY_TOTAL}Æªï¿½Õ¼ï¿½";
 
         if (passwordPiecesFound == PASSWORD_TOTAL)
         {
-            passwordTaskText.text += " ¡Ì";
+            passwordTaskText.text += " ï¿½ï¿½";
         }
 
         if (diaryFound == DIARY_TOTAL)
         {
-            diaryTaskText.text += " ¡Ì";
+            diaryTaskText.text += " ï¿½ï¿½";
         }
     }
     public bool AreAllTasksCompleted()

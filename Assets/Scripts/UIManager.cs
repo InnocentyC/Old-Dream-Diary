@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.UI;
 using System;
@@ -7,16 +8,16 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
 
-    [Header("µ¯°å UI ×é¼þ")]
-    public GameObject cluePanel;   // µ¯°åÕûÌå
-    public Image clueImage;        // µ¯°åÀïµÄÍ¼Æ¬
-    public Button closeButton;     // ¹Ø±Õ°´Å¥
+    [Header("ï¿½ï¿½ï¿½ï¿½ UI ï¿½ï¿½ï¿½")]
+    public GameObject cluePanel;   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public Image clueImage;        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼Æ¬
+    public Button closeButton;     // ï¿½Ø±Õ°ï¿½Å¥
 
-    [Header("ÈÎÎñUI")]
-    public TextMeshProUGUI passwordTaskText; // ÃÜÂëÈÎÎñµÄÎÄ±¾¿ò
-    public TextMeshProUGUI diaryTaskText;    // ÈÕ¼ÇÈÎÎñµÄÎÄ±¾¿ò
+    [Header("ï¿½ï¿½ï¿½ï¿½UI")]
+    public TextMeshProUGUI passwordTaskText; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½
+    public TextMeshProUGUI diaryTaskText;    // ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½
 
-    private Action onCloseCallback; // ¹Ø±Õµ¯°åºóÒª×öµÄÊÂ
+    private Action onCloseCallback; // ï¿½Ø±Õµï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     private void Awake()
     {
@@ -24,7 +25,7 @@ public class UIManager : MonoBehaviour
 
         if (cluePanel != null) cluePanel.SetActive(false);
 
-        // °ó¶¨¹Ø±Õ°´Å¥ÊÂ¼þ
+        // ï¿½ó¶¨¹Ø±Õ°ï¿½Å¥ï¿½Â¼ï¿½
         if (closeButton != null)
         {
             closeButton.onClick.AddListener(CloseCluePanel);
@@ -32,10 +33,10 @@ public class UIManager : MonoBehaviour
     }
     private void Start()
     {
-        // È·±£Ãæ°å¹Ø±Õ
+        // È·ï¿½ï¿½ï¿½ï¿½ï¿½Ø±ï¿½
         if (cluePanel != null) cluePanel.SetActive(false);
 
-        // ¼àÌý¹Ø±Õ°´Å¥µã»÷ÊÂ¼þ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Ø±Õ°ï¿½Å¥ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
         if (closeButton != null)
         {
             closeButton.onClick.AddListener(() =>
@@ -44,7 +45,7 @@ public class UIManager : MonoBehaviour
             });
         }
     }
-    // ÏÔÊ¾µ¯°å
+    // ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
     public void ShowClue(Sprite clueSprite, Action callback = null)
     {
         if (cluePanel != null)
@@ -57,31 +58,31 @@ public class UIManager : MonoBehaviour
             clueImage.sprite = clueSprite;
         }
 
-        onCloseCallback = callback; // ¼Ç×¡¹Ø±ÕÊ±Òª¸ÉÂï£¨±ÈÈç¿ªÊ¼¶Ô»°£©
+        onCloseCallback = callback; // ï¿½ï¿½×¡ï¿½Ø±ï¿½Ê±Òªï¿½ï¿½ï¿½ï£¨ï¿½ï¿½ï¿½ç¿ªÊ¼ï¿½Ô»ï¿½ï¿½ï¿½
     }
 
-    // ¹Ø±Õµ¯°å
+    // ï¿½Ø±Õµï¿½ï¿½ï¿½
     public void CloseCluePanel()
     {
         if (cluePanel != null && cluePanel.activeSelf)
         {
             cluePanel.SetActive(false);
 
-            // Ö´ÐÐ»Øµ÷£¨Í¨³£ÊÇ¿ªÊ¼¶Ô»°£©
+            // Ö´ï¿½Ð»Øµï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ç¿ï¿½Ê¼ï¿½Ô»ï¿½ï¿½ï¿½
             onCloseCallback?.Invoke();
             onCloseCallback = null;
         }
     }
-    // ¸üÐÂÈÎÎñUIµÄ·½·¨
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UIï¿½Ä·ï¿½ï¿½ï¿½
     public void UpdateTaskUI(string taskDescription, bool isPasswordTask = true)
     {
         if (isPasswordTask && passwordTaskText != null)
         {
-            passwordTaskText.text = taskDescription; // ¸üÐÂÃÜÂëÈÎÎñÎÄ±¾
+            passwordTaskText.text = taskDescription; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½
         }
         else if (!isPasswordTask && diaryTaskText != null)
         {
-            diaryTaskText.text = taskDescription; // ¸üÐÂÈÕ¼ÇÈÎÎñÎÄ±¾
+            diaryTaskText.text = taskDescription; // ï¿½ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½
         }
     }
 }

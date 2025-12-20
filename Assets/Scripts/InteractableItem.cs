@@ -1,82 +1,142 @@
+
+
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using TMPro;
 
 public enum ItemType
 {
-    Bed,
-    Note,
-    FishTank,
-    Doll,  //熊玩偶
-    Award,
-    Beads  //串珠
+    Bed,          //��
+    NoteBook,     //���뱾
+    Note,         //������
+    FishTank,     //���
+    Doll,         //����ż
+    Award,        //��״
+    Beads         //����
 
 }
 
+
 public class InteractableItem : MonoBehaviour
 {
-    [Header("设置")]
-    public ItemType type; // 在Inspector里选它是哪种物品
-    public GameObject questionMarkIcon; // 拖入头顶的“问号”小图标对象
+    [Header("1. ��������")]
+    public ItemType type; // ��Ʒ����
+    public GameObject questionMarkIcon; // ����ʱ��ʾ���ʺ�ͼ��
+   
+    [Header("2. �������� (��ѡ)")]
+    public bool hasPopup = false;   // �Ƿ���������ͼ
+    public GameObject popupPanel;       // �����������
+    public string popupText = "Ĭ��������������"; // ������ Inspector �����û�̬�޸�
 
-    private bool canInteract = false; // 开关：只有靠近了才能点
+
+    [Header("3. �Ի����� (��ѡ)")]
+    public bool hasDialogue = true; // �Ƿ��жԻ�
+    public DialogueSession dialogueData; // �������д�Ի�����
+    public Sprite popupSprite;
+    private bool canInteract = false; // �Ƿ��ڽ�����Χ��
 
     void Start()
     {
-        // 游戏开始时隐藏问号
-        if (questionMarkIcon != null)
-            questionMarkIcon.SetActive(false);
+        if (questionMarkIcon != null) questionMarkIcon.SetActive(false);
     }
 
-    // === 1. 鼠标点击检测 ===
-    // Unity 自带方法：当鼠标点击这个物体的 Collider 时触发
+    // === ������߼� ===
     private void OnMouseDown()
     {
-        Debug.Log("1. 鼠标点击到了物体：" + gameObject.name); // 如果这句话没打印，说明鼠标被UI挡住了，或者没点中Collider
-        if (canInteract)
+        // 1. ������飺�Ƿ�UI�ڵ����Ƿ��ڷ�Χ�ڣ��Ƿ����ڶԻ��У�
+        if (EventSystem.current.IsPointerOverGameObject()) return;
+        if (!canInteract) return;
+        if (DialogueManager.instance.IsDialogueActive) return;
+
+        Debug.Log($"�������Ʒ: {type}");
+
+        // 2. ���⴦��������ǱʼǱ���������Ҫ�������UI����������ͨ����
+        if (type == ItemType.NoteBook)
         {
-            Debug.Log("2. 玩家在范围内，准备触发剧情...");
+            // ֪ͨ GameManager ���������߼������鱾UI��
+            GameManager.Instance.OnItemInteracted(type);
+            return;
+        }
 
-            if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        // 3. ͨ�����̣����� -> �Ի� -> ����֪ͨ
+        if (hasPopup && popupPanel != null)
+        {
+            // ��ʾ�������
+            popupPanel.SetActive(true);
+
+
+            // ��̬�����ı�
+            TextMeshProUGUI textComponent = popupPanel.GetComponentInChildren<TextMeshProUGUI>();
+            if (textComponent != null)
             {
-                Debug.Log("3. 警告：鼠标虽然点到了物体，但由于UI遮挡，操作被拦截了！");
-                return;
+                textComponent.text = popupText.Replace(@"\n", "\n"); // ��̬����
             }
 
-            if (GameManager.Instance != null)
+            // �رհ�ť�߼�
+            Button closeButton = popupPanel.GetComponentInChildren<Button>();
+            if (closeButton != null)
             {
-                Debug.Log("4. 发送请求给 GameManager: " + type);
-                GameManager.Instance.HandleInteraction(type);
+                closeButton.onClick.RemoveAllListeners();
+                closeButton.onClick.AddListener(() =>
+                {
+                    popupPanel.SetActive(false);
+                    StartConversation();
+                });
             }
-            else
-            {
-                Debug.LogError("5. 致命错误：场景里找不到 GameManager！请检查是否挂载了 GameManager 脚本。");
-            }
+            /*
+            // ��ʾ���壬�رպ�ִ�� StartConversation
+            UIManager.Instance.ShowClue(popupSprite, () => {
+                StartConversation();
+            });*/
         }
         else
         {
-            Debug.Log("玩家距离太远，无法互动。");
+            // û�е��壬ֱ�ӶԻ�
+            StartConversation();
         }
     }
 
-    // === 2. 玩家进入范围 ===
+    // === �����Ի� ===
+    private void StartConversation()
+    {
+        if (hasDialogue)
+        {
+            // ��ʼ�Ի����Ի���������� OnFinished
+            DialogueManager.instance.StartDialogue(dialogueData, OnFinished);
+        }
+        else
+        {
+            OnFinished();
+        }
+    }
+
+    // === ���̽��� ===
+    private void OnFinished()
+    {
+        // ֪ͨ GameManager�������Ʒ�������ˣ�������������
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnItemInteracted(type);
+        }
+    }
+
+    // === ��Χ��� ===
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player")) // 确保是玩家碰到了
+        if (collision.CompareTag("Player"))
         {
             canInteract = true;
-            if (questionMarkIcon != null)
-                questionMarkIcon.SetActive(true); // 亮起问号
+            if (questionMarkIcon != null) questionMarkIcon.SetActive(true);
         }
     }
 
-    // === 3. 玩家离开范围 ===
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
             canInteract = false;
-            if (questionMarkIcon != null)
-                questionMarkIcon.SetActive(false); // 熄灭问号
+            if (questionMarkIcon != null) questionMarkIcon.SetActive(false);
         }
     }
-
 }

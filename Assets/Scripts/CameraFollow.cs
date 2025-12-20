@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,23 +6,23 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
 
-    [Header("ÉèÖÃ")]
-    public Transform target;          // Ö÷½Ç
-    public SpriteRenderer background; // ±³¾°
+    [Header("ï¿½ï¿½ï¿½ï¿½")]
+    public Transform target;          // ï¿½ï¿½ï¿½ï¿½
+    public SpriteRenderer background; // ï¿½ï¿½ï¿½ï¿½
 
 
-    [Header("Æ½»¬¶È (Ô½Ð¡Ô½¿ì£¬0.1-0.3 ×î¼Ñ)")]
-    public float smoothTime = 0.2f;   // Ìæ»»ÁË smoothSpeed
+    [Header("Æ½ï¿½ï¿½ï¿½ï¿½ (Ô½Ð¡Ô½ï¿½ì£¬0.1-0.3 ï¿½ï¿½ï¿½)")]
+    public float smoothTime = 0.2f;   // ï¿½æ»»ï¿½ï¿½ smoothSpeed
 
-    [Header("ÏñËØÍêÃÀÉèÖÃ")]
-    // ÄãµÄÍ¼Æ¬ËØ²ÄµÄ PPU 
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
+    // ï¿½ï¿½ï¿½Í¼Æ¬ï¿½Ø²Äµï¿½ PPU 
     public float PPU = 100f;
 
     private float camWidth;
     private float minX, maxX;
-    private float fixedY; // ¹Ì¶¨µÄ Y Öá
+    private float fixedY; // ï¿½Ì¶ï¿½ï¿½ï¿½ Y ï¿½ï¿½
 
-    // SmoothDamp ÐèÒªµÄÖÐ¼ä±äÁ¿£¬ÓÃÀ´¼ÇÂ¼µ±Ç°ËÙ¶È
+    // SmoothDamp ï¿½ï¿½Òªï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½Ç°ï¿½Ù¶ï¿½
     private Vector3 velocity = Vector3.zero;
 
     void Start()
@@ -34,17 +35,17 @@ public class CameraFollow : MonoBehaviour
         {
             Bounds bgBounds = background.bounds;
 
-            // 1. ¼ÆËã×óÓÒÒÆ¶¯µÄ¼«ÏÞ
+            // 1. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
             minX = bgBounds.min.x + camWidth;
             maxX = bgBounds.max.x - camWidth;
 
-            // 2. ¡¾¹Ø¼ü¡¿Ëø¶¨¸ß¶ÈÎª±³¾°µÄÖÐÐÄ¸ß¶È
-            // ÕâÑùÏà»úÓÀÔ¶Õý¶Ô×Å±³¾°Í¼µÄÖÐ¼ä
+            // 2. ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¶ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ß¶ï¿½
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½Å±ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½Ð¼ï¿½
             fixedY = bgBounds.center.y;
         }
         else
         {
-            Debug.LogError("Çë°Ñ±³¾°Í¼Æ¬ÍÏ¸øÏà»úµÄ CameraFollow ½Å±¾£¡");
+            Debug.LogError("ï¿½ï¿½Ñ±ï¿½ï¿½ï¿½Í¼Æ¬ï¿½Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CameraFollow ï¿½Å±ï¿½ï¿½ï¿½");
         }
     }
 
@@ -52,14 +53,14 @@ public class CameraFollow : MonoBehaviour
     {
         if (target == null || background == null) return;
 
-        // 1. È·¶¨Ä¿±êÎ»ÖÃ
-        // ÎÒÃÇÏ£ÍûÏà»úÈ¥ÄÄÀï£¿È¥Ö÷½ÇµÄX£¬¹Ì¶¨µÄY£¬Ô­±¾µÄZ
+        // 1. È·ï¿½ï¿½Ä¿ï¿½ï¿½Î»ï¿½ï¿½
+        // ï¿½ï¿½ï¿½ï¿½Ï£ï¿½ï¿½ï¿½ï¿½ï¿½È¥ï¿½ï¿½ï¿½ï£¿È¥ï¿½ï¿½ï¿½Çµï¿½Xï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ï¿½Yï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½Z
         Vector3 targetPos = new Vector3(target.position.x, fixedY, transform.position.z);
 
 
 
-        // 2. ÏÞÖÆÄ¿±êÎ»ÖÃ (Clamp)
-        // ¡¾ÓÅ»¯¡¿ÎÒÃÇÔÚÒÆ¶¯Ç°¾ÍÏÞÖÆÄ¿±êµã£¬ÕâÑùÏà»úµ½±ß½çÊ±»á¼õËÙÍ£ÏÂ£¬¶ø²»ÊÇ×²Ç½
+        // 2. ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½Î»ï¿½ï¿½ (Clamp)
+        // ï¿½ï¿½ï¿½Å»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½Â£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×²Ç½
         if (maxX >= minX)
         {
             targetPos.x = Mathf.Clamp(targetPos.x, minX, maxX);
@@ -72,8 +73,8 @@ public class CameraFollow : MonoBehaviour
 
         Vector3 finalPos = Vector3.SmoothDamp(transform.position, targetPos, ref velocity, smoothTime);
 
-        // 3. Ê¹ÓÃ SmoothDamp ½øÐÐË¿»¬ÒÆ¶¯
-        // Ëü¿ÉÒÔ×Ô¶¯´¦Àíµ±Ç°Î»ÖÃµ½Ä¿±êÎ»ÖÃµÄÆ½»¬¹ý¶É£¬³¹µ×Ïû³ý¶¶¶¯
+        // 3. Ê¹ï¿½ï¿½ SmoothDamp ï¿½ï¿½ï¿½ï¿½Ë¿ï¿½ï¿½ï¿½Æ¶ï¿½
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Î»ï¿½Ãµï¿½Ä¿ï¿½ï¿½Î»ï¿½Ãµï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         float pixelX = Mathf.Round(finalPos.x * PPU) / PPU;
         float pixelY = Mathf.Round(finalPos.y * PPU) / PPU;
 
