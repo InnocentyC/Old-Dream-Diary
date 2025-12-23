@@ -54,6 +54,8 @@ public class InteractableItem : MonoBehaviour
     {
 
         // 1. 基础检查：是否被UI遮挡？是否在范围内？是否正在对话中？
+        if (GameManager.Instance.IsUIBlocking) return;
+
         if (!canInteract || DialogueManager.instance.IsDialogueActive) return;
         if (!allowRepeatClick && isCollected) return;
         // 如果当前正在对话中，不允许触发

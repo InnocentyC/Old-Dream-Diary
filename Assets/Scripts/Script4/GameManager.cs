@@ -14,7 +14,14 @@ public class GameManager: MonoBehaviour
         ReadyToExit         // 点击床后，准备切场
     }
     public RoomState CurrentState { get; private set; }
-    
+    //UI阻断其他交互
+    public bool IsUIBlocking { get; private set; }
+
+    public void SetUIBlocking(bool block)
+    {
+        IsUIBlocking = block;
+    }
+
     public DialogueManager dialogueManager;
     public SceneTransitionManager sceneTransitionManager;
     public TaskManager taskManager;
