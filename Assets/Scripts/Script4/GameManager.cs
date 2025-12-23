@@ -4,6 +4,7 @@ using UnityEngine;
 public class GameManager: MonoBehaviour
 {
     public static GameManager Instance;
+    public string Name;
     //房间状态机
     public enum RoomState
     {
@@ -64,6 +65,11 @@ public class GameManager: MonoBehaviour
         CurrentState = newState;
         Debug.Log($"[RoomState] -> {newState}");
 
+        foreach (var item in FindObjectsOfType<InteractableItem>())
+        {
+            item.SendMessage("RefreshInteractable", SendMessageOptions.DontRequireReceiver);
+        }
+
         if (newState == RoomState.NoteLocked)
         {
             taskManager.ShowTaskUI();
@@ -82,7 +88,10 @@ public class GameManager: MonoBehaviour
             {
                 new DialogueLine{ text="又是新的一天开始了。" },
                 new DialogueLine{ text="或许连你自己还没有意识到，这一天多么不同。" },
-                new DialogueLine{ speakerName="主控", text="我小时候的房间？...我好像还变小了。", portrait=child_confused }
+                new DialogueLine{ speakerName=Name, text="这是哪？是我小时候的房间？", portrait=child_confused },
+                new DialogueLine{ speakerName=Name, text="…我怎么变得这么矮……我变小了？！", portrait=child_confused },
+                new DialogueLine{ text="这里是，旧城区，你的家。" }
+
             }
         };
 
@@ -137,8 +146,11 @@ public class GameManager: MonoBehaviour
         }
         if (type == ItemType.Note)
         {
-            taskManager.ViewNote();
-            EnterState(RoomState.PasswordCollecting);
+            if (!taskManager.IsNoteViewed())
+            {
+                taskManager.ViewNote();
+                EnterState(RoomState.PasswordCollecting);
+            }
             return;
         }
 
@@ -190,7 +202,7 @@ public class GameManager: MonoBehaviour
 
     private void PlayExit()
     {
-        sceneTransitionManager.SetNextScene("script5");
+        sceneTransitionManager.SetNextScene("Script5");
         sceneTransitionManager.TransitionToNextScene();
     }
 

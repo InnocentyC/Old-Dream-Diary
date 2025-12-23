@@ -19,7 +19,7 @@ public enum ItemType
 
 public class InteractableItem : MonoBehaviour
 {
-    [Header("交互行为")]
+    [Header("点击设置")]
     public bool allowRepeatClick = true;
 
     [Header("鸭子音效")]
@@ -31,8 +31,8 @@ public class InteractableItem : MonoBehaviour
     public ItemType type; // 物品类型
     public GameObject questionMarkIcon; // 靠近时显示的问号图标
    
-    [Header("2. 弹板配置 (可选)")]
-    public bool hasPopup = false;   // 是否有线索大图
+    [Header("2. 弹板配置 (可选)")] //只能用于世界物体，不可用于UI内按钮
+    public bool hasPopup = false;   // 是否有弹板
     public GameObject popupPanel;       // 拖入线索面板
     public string popupText = "默认线索描述内容"; // 可以在 Inspector 中设置或动态修改
 
@@ -44,6 +44,8 @@ public class InteractableItem : MonoBehaviour
 
     private bool canInteract = false; // 是否在交互范围内
     private bool isCollected = false; //防止重复触发
+    private bool isPlayerNearby = false;
+
     void Start()
     {
         if (questionMarkIcon != null) questionMarkIcon.SetActive(false);
@@ -54,113 +56,58 @@ public class InteractableItem : MonoBehaviour
     {
 
         // 1. 基础检查：是否被UI遮挡？是否在范围内？是否正在对话中？
-        if (GameManager.Instance.IsUIBlocking) return;
-
-        if (!canInteract || DialogueManager.instance.IsDialogueActive) return;
+ 
+        if (GameManager.Instance.IsUIBlocking || !canInteract || DialogueManager.instance.IsDialogueActive) return;
         if (!allowRepeatClick && isCollected) return;
-        // 如果当前正在对话中，不允许触发
-        if (!canInteract || DialogueManager.instance.IsDialogueActive) return;
+
 
 
 
 
         if (type == ItemType.Dusk)
         {
-            audioSource.PlayOneShot(quackSound);
+            if (audioSource != null && quackSound != null)
+                audioSource.PlayOneShot(quackSound);
             return;
         }
-        if (type == ItemType.Note)
+        if (hasPopup && popupPanel != null)
         {
-            if (GameManager.Instance.taskManager.IsNoteViewed())
-            {
-                // 已查看过，不再触发
-                return;
-            }
-
-            if (hasPopup && popupPanel)
-            {
-                popupPanel.SetActive(true);
-
-                // 设置内容
-                TextMeshProUGUI textComp = popupPanel.GetComponentInChildren<TextMeshProUGUI>();
-                if (textComp != null) textComp.text = popupText.Replace(@"\n", "\n");
-
-                // 关闭按钮
-                Button closeBtn = popupPanel.GetComponentInChildren<Button>();
-                if (closeBtn != null)
-                {
-                    closeBtn.onClick.RemoveAllListeners();
-                    closeBtn.onClick.AddListener(() =>
-                    {
-                        popupPanel.SetActive(false);
-                        GameManager.Instance.taskManager.ViewNote(); // 标记已查看
-                        GameManager.Instance.EnterState(GameManager.RoomState.PasswordCollecting);
-                    });
-                }
-                return;
-            }
-        }
-        if (type == ItemType.NoteBook)
-        {
-            if (hasPopup && popupPanel)
-            {
-                popupPanel.SetActive(true);
-                TextMeshProUGUI textComp = popupPanel.GetComponentInChildren<TextMeshProUGUI>();
-                if (textComp != null) textComp.text = popupText.Replace(@"\n", "\n");
-
-                Button closeBtn = popupPanel.GetComponentInChildren<Button>();
-                if (closeBtn != null)
-                {
-                    closeBtn.onClick.RemoveAllListeners();
-                    closeBtn.onClick.AddListener(() => popupPanel.SetActive(false));
-                }
-                return;
-            }
-        }
-
-
-        // 通用流程：弹板 -> 对话 -> 结束通知
-        if (hasPopup && popupPanel)
-        {       
-            popupPanel.SetActive(true);
-
-            // 动态设置弹板文本
-            TextMeshProUGUI textComponent = popupPanel.GetComponentInChildren<TextMeshProUGUI>();
-            if (textComponent != null)
-            {
-                textComponent.text = popupText.Replace(@"\n", "\n"); // 动态内容
-            }
-
-            // 关闭按钮逻辑
-            Button closeButton = popupPanel.GetComponentInChildren<Button>();
-            if (closeButton != null)
-            {
-                closeButton.onClick.RemoveAllListeners();
-                closeButton.onClick.AddListener(() =>
-                {
-                    popupPanel.SetActive(false);
-                    StartConversation();
-                });
-            }                          
+            OpenPopup();
         }
         else
         {
-            // 没有弹板，直接对话
             StartConversation();
         }
-        
+    }
+    #region === Popup ===
 
+    private void OpenPopup()
+    {
+        popupPanel.SetActive(true);
+
+        var text = popupPanel.GetComponentInChildren<TextMeshProUGUI>();
+        if (text != null)
+            text.text = popupText.Replace(@"\n", "\n");
+
+        var closeBtn = popupPanel.GetComponentInChildren<Button>();
+        if (closeBtn != null)
+        {
+            closeBtn.onClick.RemoveAllListeners();
+            closeBtn.onClick.AddListener(() =>
+            {
+                popupPanel.SetActive(false);
+                StartConversation();
+            });
+        }
     }
 
-    // === 处理对话 ===
+    #endregion
+    #region === Dialogue ===
+
     private void StartConversation()
     {
-     //   Debug.Log($"DialogueManager.instance = {DialogueManager.instance}");
-       // Debug.Log($"dialogueData = {dialogueData}");
-
-        if (hasDialogue)
+        if (hasDialogue && dialogueData != null)
         {
-            // 开始对话，对话结束后调用 OnFinished
             DialogueManager.instance.StartDialogue(dialogueData, OnFinished);
         }
         else
@@ -169,36 +116,67 @@ public class InteractableItem : MonoBehaviour
         }
     }
 
-    // === 流程结束 ===
     private void OnFinished()
     {
         GameManager.Instance.OnItemInteracted(type);
-        
+
         if (!allowRepeatClick)
-        {
             isCollected = true;
-            
-        }
     }
 
-    // === 范围检测 ===
+    #endregion
+
+
+
+    #region === Range & State ===
+    public void RefreshInteractable()
+    {
+        bool allowedByState = false;
+        var state = GameManager.Instance.CurrentState;
+
+        switch (type)
+        {
+           
+            case ItemType.NoteBook:
+            case ItemType.Beads:
+                allowedByState = (state != GameManager.RoomState.Intro);
+                break;
+
+            case ItemType.FishTank:
+            case ItemType.Doll:
+            case ItemType.Award:
+                allowedByState = (state == GameManager.RoomState.PasswordCollecting ||
+                                  state == GameManager.RoomState.AllTasksDone);
+                break;
+
+            case ItemType.Bed:
+                allowedByState = (state != GameManager.RoomState.Intro &&
+                                  state != GameManager.RoomState.ReadyToExit);
+                break;
+        }
+
+        canInteract = isPlayerNearby && allowedByState;
+
+        if (questionMarkIcon != null)
+            questionMarkIcon.SetActive(canInteract);
+    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
-        {
-            canInteract = true;
-            if (questionMarkIcon != null) questionMarkIcon.SetActive(true);
-        }
+        if (!collision.CompareTag("Player")) return;
+       // Trigger 只记录“玩家在范围内”
+        isPlayerNearby = true;
+        RefreshInteractable();
+        
         Debug.Log($"进入交互范围: {type}");
 
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
-        {
-            canInteract = false;
-            if (questionMarkIcon != null) questionMarkIcon.SetActive(false);
-        }
-    }
+        if (!collision.CompareTag("Player")) return;
+        isPlayerNearby = false;
+        RefreshInteractable();
+        
+    }   
+    #endregion
 }

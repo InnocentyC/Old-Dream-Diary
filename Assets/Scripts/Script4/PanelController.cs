@@ -4,28 +4,24 @@ using UnityEngine;
 
 public class PanelController : MonoBehaviour
 {
-    [Header("»ù´¡ÐÐÎª")]
-    [SerializeField] protected bool hideOnStart = true;
+    public bool hideOnStart = true;
 
-    protected virtual void Awake()
+    void Start()
     {
         if (hideOnStart)
             gameObject.SetActive(false);
     }
 
-    public virtual void Show()
+    public void Show()
     {
         gameObject.SetActive(true);
+        GameManager.Instance.SetUIBlocking (true);
     }
 
-    public virtual void Hide()
+    public void Hide()
     {
         gameObject.SetActive(false);
-    }
-
-    public virtual void Toggle(bool show)
-    {
-        gameObject.SetActive(show);
+        GameManager.Instance.SetUIBlocking(false);
     }
 }
 

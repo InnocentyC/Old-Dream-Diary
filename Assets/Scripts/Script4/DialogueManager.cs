@@ -8,7 +8,7 @@ using System.Collections.Generic;
 public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager instance;
-
+    public string Name;
     [Header("UI 组件绑定")]
     public GameObject dialoguePanel;    // 整个对话框
     public Image portraitImage;         // 立绘显示位置
@@ -80,7 +80,7 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(true); // 显示对话框
         DisplayNextLine();
     }
-    public void PlayOneLine(string text, string speakerName = "主控", Sprite portrait = null)
+    public void PlayOneLine(string text, string speakerName = "雨漩", Sprite portrait = null)
     {
         // 如果当前正在完整对话中，不打断
         if (IsDialogueActive) return;
