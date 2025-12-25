@@ -9,63 +9,63 @@ public class DialogueManager : MonoBehaviour
 {
     public static DialogueManager instance;
     public string Name;
-    [Header("UI ×é¼ş°ó¶¨")]
-    public GameObject dialoguePanel;    // Õû¸ö¶Ô»°¿ò
-    public Image portraitImage;         // Á¢»æÏÔÊ¾Î»ÖÃ
-    public TextMeshProUGUI nameText;    // Ãû×ÖÏÔÊ¾Î»ÖÃ
-    public TextMeshProUGUI contentText; // ÎÄ×ÖÏÔÊ¾Î»ÖÃ
+    [Header("UI ç»„ä»¶ç»‘å®š")]
+    public GameObject dialoguePanel;    // æ•´ä¸ªå¯¹è¯æ¡†
+    public Image portraitImage;         // ç«‹ç»˜æ˜¾ç¤ºä½ç½®
+    public TextMeshProUGUI nameText;    // åå­—æ˜¾ç¤ºä½ç½®
+    public TextMeshProUGUI contentText; // æ–‡å­—æ˜¾ç¤ºä½ç½®
 
-    [Header("ÉèÖÃ")]
+    [Header("è®¾ç½®")]
     public float typingSpeed = 0.05f;
-    [Header("Ä¬ÈÏÖ÷½ÇÁ¢»æ")]
+    [Header("é»˜è®¤ä¸»è§’ç«‹ç»˜")]
     public Sprite defaultPortrait;
 
-    private DialogueSession currentDialogue; // µ±Ç°¶Ô»°Êı¾İ
+    private DialogueSession currentDialogue; // å½“å‰å¯¹è¯æ•°æ®
     private Queue<DialogueLine> linesQueue = new Queue<DialogueLine>();
     private bool isTyping = false;
     private string currentFullText = "";
-    private System.Action onDialogueFinished; // ¶Ô»°½áÊøºóµÄ»Øµ÷
+    private System.Action onDialogueFinished; // å¯¹è¯ç»“æŸåçš„å›è°ƒ
 
     public bool IsDialogueActive => dialoguePanel.activeSelf;
 
     private void Awake()
     {
         if (instance == null) instance = this;
-        dialoguePanel.SetActive(false); // ³õÊ¼Òş²Ø
+        dialoguePanel.SetActive(false); // åˆå§‹éšè—
     }
 
     private void Update()
     {
         if (!dialoguePanel.activeSelf) return;
 
-        // µã»÷Êó±ê×ó¼ü »ò ¿Õ¸ñ ¼ÌĞø
+        // ç‚¹å‡»é¼ æ ‡å·¦é”® æˆ– ç©ºæ ¼ ç»§ç»­
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
         {
-            // ¼ì²éÊÇ·ñµã»÷ÔÚ¶Ô»°Ãæ°åÇøÓò
+            // æ£€æŸ¥æ˜¯å¦ç‚¹å‡»åœ¨å¯¹è¯é¢æ¿åŒºåŸŸ
             if (IsPointerOverUIElement(dialoguePanel))
             {
                 if (isTyping)
                 {
-                    // Èç¹ûÕıÔÚ´ò×Ö£¬Ë²¼äÏÔÊ¾È«¾ä
+                    // å¦‚æœæ­£åœ¨æ‰“å­—ï¼Œç¬é—´æ˜¾ç¤ºå…¨å¥
                     StopAllCoroutines();
                     contentText.text = currentFullText;
                     isTyping = false;
                 }
                 else
                 {
-                    // Èç¹û´òÍêÁË£¬ÏÔÊ¾ÏÂÒ»¾ä
+                    // å¦‚æœæ‰“å®Œäº†ï¼Œæ˜¾ç¤ºä¸‹ä¸€å¥
                     DisplayNextLine();
                 }
             }
         }
     }
 
-    // Æô¶¯¶Ô»°
+    // å¯åŠ¨å¯¹è¯
     public void StartDialogue(DialogueSession dialogue, System.Action onFinished = null)
     {
         if (dialogue == null || dialogue.lines == null || dialogue.lines.Length == 0)
         {
-            Debug.LogError("¶Ô»°Êı¾İÎª¿Õ£¬ÎŞ·¨Æô¶¯¶Ô»°£¡");
+            Debug.LogError("å¯¹è¯æ•°æ®ä¸ºç©ºï¼Œæ— æ³•å¯åŠ¨å¯¹è¯ï¼");
             return;
         }
         currentDialogue = dialogue;
@@ -77,12 +77,12 @@ public class DialogueManager : MonoBehaviour
         }
 
         onDialogueFinished = onFinished;
-        dialoguePanel.SetActive(true); // ÏÔÊ¾¶Ô»°¿ò
+        dialoguePanel.SetActive(true); // æ˜¾ç¤ºå¯¹è¯æ¡†
         DisplayNextLine();
     }
-    public void PlayOneLine(string text, string speakerName = "Óêäö", Sprite portrait = null)
+    public void PlayOneLine(string text, string speakerName = "é›¨æ¼©", Sprite portrait = null)
     {
-        // Èç¹ûµ±Ç°ÕıÔÚÍêÕû¶Ô»°ÖĞ£¬²»´ò¶Ï
+        // å¦‚æœå½“å‰æ­£åœ¨å®Œæ•´å¯¹è¯ä¸­ï¼Œä¸æ‰“æ–­
         if (IsDialogueActive) return;
 
         var tempDialogue = new DialogueSession
@@ -101,7 +101,7 @@ public class DialogueManager : MonoBehaviour
         StartDialogue(tempDialogue);
     }
 
-    // ÏÔÊ¾ÏÂÒ»¾ä
+    // æ˜¾ç¤ºä¸‹ä¸€å¥
     private void DisplayNextLine()
     {
         if (linesQueue.Count == 0)
@@ -110,7 +110,7 @@ public class DialogueManager : MonoBehaviour
             return;
         }
         var lines= linesQueue.Dequeue();
-        // ===== Ãû×Ö´¦Àí =====
+        // ===== åå­—å¤„ç† =====
         if (string.IsNullOrEmpty(lines.speakerName))
         {
             nameText.gameObject.SetActive(false);
@@ -127,13 +127,13 @@ public class DialogueManager : MonoBehaviour
         }
         else if (!string.IsNullOrEmpty(lines.speakerName))
         {
-            // ÓĞËµ»°Õß£¬µ«Ã»Ö¸¶¨±íÇé ¡ú Ê¹ÓÃÄ¬ÈÏÁ¢»æ
+            // æœ‰è¯´è¯è€…ï¼Œä½†æ²¡æŒ‡å®šè¡¨æƒ… â†’ ä½¿ç”¨é»˜è®¤ç«‹ç»˜
             portraitImage.gameObject.SetActive(true);
             portraitImage.sprite = defaultPortrait;
         }
         else
         {
-            // ÅÔ°× ¡ú ²»ÏÔÊ¾Á¢»æ
+            // æ—ç™½ â†’ ä¸æ˜¾ç¤ºç«‹ç»˜
             portraitImage.gameObject.SetActive(false);
         }
 
@@ -145,7 +145,7 @@ public class DialogueManager : MonoBehaviour
         StartCoroutine(TypeText(currentFullText));
     }
 
-    // ´ò×ÖĞ§¹û
+    // æ‰“å­—æ•ˆæœ
     IEnumerator TypeText(string text)
     {
         isTyping = true;
@@ -174,10 +174,10 @@ public class DialogueManager : MonoBehaviour
             out localPoint
         ) && rect.Contains(localPoint);
     }
-    // ½áÊø¶Ô»°
+    // ç»“æŸå¯¹è¯
     private void EndDialogue()
     {
-        Debug.Log("¶Ô»°½áÊø£¬Òş²Ø¶Ô»°¿ò£¡");
+        Debug.Log("å¯¹è¯ç»“æŸï¼Œéšè—å¯¹è¯æ¡†ï¼");
         dialoguePanel.SetActive(false);
         onDialogueFinished?.Invoke();
     }

@@ -5,24 +5,23 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
 
-    [Header("ÉèÖÃ")]
-    public Transform target;          // Ö÷½Ç
-    public SpriteRenderer background; // ±³¾°
+    [Header("è®¾ç½®")]
+    public Transform target;          // ä¸»è§’
+    public SpriteRenderer background; // èƒŒæ™¯
 
 
-    [Header("Æ½»¬¶È (Ô½Ğ¡Ô½¿ì£¬0.1-0.3 ×î¼Ñ)")]
-    public float smoothTime = 0.2f;   // Ìæ»»ÁË smoothSpeed
+    [Header("ç©å®¶å¼•ç”¨")]
+    public PlayerController playerController; // ç”¨äºè·å–ç©å®¶é€Ÿåº¦
 
-    [Header("ÏñËØÍêÃÀÉèÖÃ")]
-    // ÄãµÄÍ¼Æ¬ËØ²ÄµÄ PPU 
+    [Header("åƒç´ å®Œç¾è®¾ç½®")]
+    // ä½ çš„å›¾ç‰‡ç´ æçš„ PPU 
     public float PPU = 100f;
 
     private float camWidth;
     private float minX, maxX;
-    private float fixedY; // ¹Ì¶¨µÄ Y Öá
+    private float fixedY; // å›ºå®šçš„ Y è½´
 
-    // SmoothDamp ĞèÒªµÄÖĞ¼ä±äÁ¿£¬ÓÃÀ´¼ÇÂ¼µ±Ç°ËÙ¶È
-    private Vector3 velocity = Vector3.zero;
+    private Vector3 lastPlayerPos; // è®°å½•ä¸Šä¸€å¸§ç©å®¶ä½ç½®
 
     void Start()
     {
@@ -34,17 +33,33 @@ public class CameraFollow : MonoBehaviour
         {
             Bounds bgBounds = background.bounds;
 
-            // 1. ¼ÆËã×óÓÒÒÆ¶¯µÄ¼«ÏŞ
+            // 1. è®¡ç®—ç›¸æœºå¯ä»¥ç§»åŠ¨çš„å·¦å³è¾¹ç•Œ
+            // ç¡®ä¿ç›¸æœºä¸ä¼šæ˜¾ç¤ºèƒŒæ™¯å¤–çš„åŒºåŸŸ
             minX = bgBounds.min.x + camWidth;
             maxX = bgBounds.max.x - camWidth;
+            
+            Debug.Log($"ç›¸æœºè¾¹ç•Œè®¡ç®—: èƒŒæ™¯èŒƒå›´({bgBounds.min.x:F2}, {bgBounds.max.x:F2}), ç›¸æœºå®½åº¦({camWidth:F2}), å¯ç§»åŠ¨èŒƒå›´({minX:F2}, {maxX:F2})");
 
-            // 2. ¡¾¹Ø¼ü¡¿Ëø¶¨¸ß¶ÈÎª±³¾°µÄÖĞĞÄ¸ß¶È
-            // ÕâÑùÏà»úÓÀÔ¶Õı¶Ô×Å±³¾°Í¼µÄÖĞ¼ä
+            // 2. ã€å…³é”®ã€‘é”å®šé«˜åº¦ä¸ºèƒŒæ™¯çš„ä¸­å¿ƒé«˜åº¦
+            // è¿™æ ·ç›¸æœºæ°¸è¿œæ­£å¯¹ç€èƒŒæ™¯å›¾çš„ä¸­é—´
             fixedY = bgBounds.center.y;
         }
         else
         {
-            Debug.LogError("Çë°Ñ±³¾°Í¼Æ¬ÍÏ¸øÏà»úµÄ CameraFollow ½Å±¾£¡");
+            Debug.LogError("è¯·æŠŠèƒŒæ™¯å›¾ç‰‡æ‹–ç»™ç›¸æœºçš„ CameraFollow è„šæœ¬ï¼");
+        }
+        
+        // åˆå§‹åŒ–ç©å®¶ä½ç½®è®°å½•å¹¶è®¾ç½®ç›¸æœºåˆå§‹ä½ç½®
+        if (target != null)
+        {
+            lastPlayerPos = target.position;
+            
+            // è®¾ç½®ç›¸æœºåˆå§‹ä½ç½®åœ¨äººç‰©æ­£ä¸­
+            Vector3 initialPos = new Vector3(target.position.x, fixedY, transform.position.z);
+            initialPos.x = Mathf.Clamp(initialPos.x, minX, maxX);
+            transform.position = initialPos;
+            
+            Debug.Log($"ç›¸æœºåˆå§‹ä½ç½®è®¾ç½®: äººç‰©ä½ç½®{target.position.x:F2} â†’ ç›¸æœºä½ç½®{initialPos.x:F2}");
         }
     }
 
@@ -52,31 +67,71 @@ public class CameraFollow : MonoBehaviour
     {
         if (target == null || background == null) return;
 
-        // 1. È·¶¨Ä¿±êÎ»ÖÃ
-        // ÎÒÃÇÏ£ÍûÏà»úÈ¥ÄÄÀï£¿È¥Ö÷½ÇµÄX£¬¹Ì¶¨µÄY£¬Ô­±¾µÄZ
+        // 1. ç¡®å®šç›®æ ‡ä½ç½®
+        // æˆ‘ä»¬å¸Œæœ›ç›¸æœºå»å“ªé‡Œï¼Ÿå»ä¸»è§’çš„Xï¼Œå›ºå®šçš„Yï¼ŒåŸæœ¬çš„Z
         Vector3 targetPos = new Vector3(target.position.x, fixedY, transform.position.z);
 
 
 
-        // 2. ÏŞÖÆÄ¿±êÎ»ÖÃ (Clamp)
-        // ¡¾ÓÅ»¯¡¿ÎÒÃÇÔÚÒÆ¶¯Ç°¾ÍÏŞÖÆÄ¿±êµã£¬ÕâÑùÏà»úµ½±ß½çÊ±»á¼õËÙÍ£ÏÂ£¬¶ø²»ÊÇ×²Ç½
+        // 2. é™åˆ¶ç›®æ ‡ä½ç½® (Clamp)
+        // ã€å…³é”®ä¼˜åŒ–ã€‘åœ¨SmoothDampä¹‹å‰å°±é™åˆ¶ç›®æ ‡ä½ç½®ï¼Œç¡®ä¿ä¸ä¼šè¶…å‡ºè¾¹ç•Œ
         if (maxX >= minX)
         {
             targetPos.x = Mathf.Clamp(targetPos.x, minX, maxX);
+            
+            // è°ƒè¯•è¾“å‡º
+            if (targetPos.x == minX || targetPos.x == maxX)
+            {
+                Debug.Log($"ç›¸æœºåˆ°è¾¾è¾¹ç•Œï¼Œç›®æ ‡ä½ç½®: {targetPos.x:F2}");
+            }
         }
         else
         {
+            // èƒŒæ™¯å¤ªå°ï¼Œç›¸æœºå›ºå®šåœ¨ä¸­å¿ƒ
             targetPos.x = background.bounds.center.x;
+            Debug.LogWarning("èƒŒæ™¯æ¯”ç›¸æœºè§†å£è¿˜å°ï¼Œç›¸æœºå›ºå®šåœ¨ä¸­å¿ƒ");
         }
 
 
-        Vector3 finalPos = Vector3.SmoothDamp(transform.position, targetPos, ref velocity, smoothTime);
+        // 3. ã€å®Œå…¨åŒæ­¥ã€‘ç›´æ¥è·Ÿéšï¼Œäººç‰©åŠ¨å¤šå°‘ç›¸æœºå°±åŠ¨å¤šå°‘
+        // è®¡ç®—ç©å®¶ç§»åŠ¨äº†å¤šå°‘ï¼Œç›¸æœºå°±ç§»åŠ¨å¤šå°‘
+        Vector3 playerMovement = target.position - lastPlayerPos;
+        
+        // è°ƒè¯•ï¼šè¾“å‡ºç›¸æœºè·Ÿéšçš„ç§»åŠ¨é‡
+        if (Mathf.Abs(playerMovement.x) > 0.001f)
+        {
+            Debug.Log($"ç›¸æœºè·ŸéšåŸå§‹: ç©å®¶ç§»åŠ¨é‡={playerMovement.x:F6}, ç©å®¶ä½ç½®={target.position.x:F6}, ä¸Šä¸€å¸§={lastPlayerPos.x:F6}");
+        }
+        
+        // è®¡ç®—ç›¸æœºçš„æ–°ä½ç½®ï¼ˆç›´æ¥åº”ç”¨ç›¸åŒçš„ç§»åŠ¨é‡ï¼‰
+        Vector3 newCameraPos = transform.position + playerMovement;
+        newCameraPos.y = fixedY; // Yè½´ä¿æŒå›ºå®š
+        
+        // 4. ã€ä¼˜å…ˆå¤„ç†è¾¹ç•Œã€‘å¦‚æœè¶…å‡ºè¾¹ç•Œï¼Œå…ˆé™åˆ¶ç§»åŠ¨
+        Vector3 clampedPos = newCameraPos;
+        if (maxX >= minX)
+        {
+            float originalX = clampedPos.x;
+            clampedPos.x = Mathf.Clamp(clampedPos.x, minX, maxX);
+            
+            // å¦‚æœè¢«è¾¹ç•Œé™åˆ¶äº†ï¼Œè®°å½•å®é™…ç§»åŠ¨é‡
+            if (Mathf.Abs(clampedPos.x - originalX) > 0.001f)
+            {
+                Debug.Log($"ç›¸æœºè¢«è¾¹ç•Œé™åˆ¶: è®¡ç®—ä½ç½®{originalX:F2} â†’ é™åˆ¶å{clampedPos.x:F2}");
+            }
+        }
+        else
+        {
+            clampedPos.x = background.bounds.center.x;
+        }
+        
+        // 5. ã€æµ‹è¯•ã€‘ç¦ç”¨åƒç´ å¯¹é½ï¼Œç›´æ¥ä½¿ç”¨é™åˆ¶åçš„ä½ç½®
+        // 6. æœ€ç»ˆä½ç½®ï¼ˆäººç‰©åœæ­¢ï¼Œç›¸æœºä¹Ÿç«‹å³åœæ­¢ï¼‰
+        Vector3 finalCameraPos = clampedPos;
 
-        // 3. Ê¹ÓÃ SmoothDamp ½øĞĞË¿»¬ÒÆ¶¯
-        // Ëü¿ÉÒÔ×Ô¶¯´¦Àíµ±Ç°Î»ÖÃµ½Ä¿±êÎ»ÖÃµÄÆ½»¬¹ı¶É£¬³¹µ×Ïû³ı¶¶¶¯
-        float pixelX = Mathf.Round(finalPos.x * PPU) / PPU;
-        float pixelY = Mathf.Round(finalPos.y * PPU) / PPU;
-
-        transform.position = new Vector3(pixelX, pixelY, -10f);
+        transform.position = finalCameraPos;
+        
+        // 7. æ›´æ–°ç©å®¶ä½ç½®è®°å½•
+        lastPlayerPos = target.position;
     }
 }

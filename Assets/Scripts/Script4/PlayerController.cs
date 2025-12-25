@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("ÒÆ¶¯ÉèÖÃ")]
+    [Header("ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public float speed = 5f;
 
-    [Header("µØÍ¼±ß½çÏŞÖÆ")]
+    [Header("ï¿½ï¿½Í¼ï¿½ß½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public GameObject background; 
-    private float minX; // ×ó±ß
-    private float maxX;  // ÓÒ±ß
+    private float minX; // ï¿½ï¿½ï¿½
+    private float maxX;  // ï¿½Ò±ï¿½
 
     private Rigidbody2D rb;
     private SpriteRenderer mySpriteRenderer; 
@@ -23,79 +23,73 @@ public class PlayerController : MonoBehaviour
         mySpriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
 
-        // --- ×Ô¶¯¼ÆËã±ß½çµÄºËĞÄÂß¼­ ---
+        // --- ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½Äºï¿½ï¿½ï¿½ï¿½ß¼ï¿½ ---
         if (background != null)
         {
-            // 1. »ñÈ¡±³¾°ºÍÖ÷½ÇµÄäÖÈ¾Æ÷ (Renderer)
+            // 1. ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½È¾ï¿½ï¿½ (Renderer)
           
             Renderer bgRenderer = background.GetComponent<Renderer>();
             Renderer playerRenderer = GetComponent<Renderer>();
 
             if (bgRenderer != null && playerRenderer != null)
             {
-                // 2. »ñÈ¡Ö÷½ÇµÄÒ»°ë¿í¶È (extents.x ¾ÍÊÇÎïÌå¿í¶ÈµÄÒ»°ë)
+                // 2. ï¿½ï¿½È¡ï¿½ï¿½ï¿½Çµï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ (extents.x ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Èµï¿½Ò»ï¿½ï¿½)
                 float playerHalfWidth = playerRenderer.bounds.extents.x;
 
-                // 3. ¼ÆËã×ó±ß½ç£º±³¾°µÄ×î×ó±ß + Ö÷½Ç°ë¿í
-                // bounds.min.x ÊÇÎïÌåÔÚÊÀ½ç×ø±êÖĞ×î×ó±ßµÄµã
+                // 3. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß½ç£ºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ + ï¿½ï¿½ï¿½Ç°ï¿½ï¿½
+                // bounds.min.x ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ßµÄµï¿½
                 minX = bgRenderer.bounds.min.x + playerHalfWidth;
 
-                // 4. ¼ÆËãÓÒ±ß½ç£º±³¾°µÄ×îÓÒ±ß - Ö÷½Ç°ë¿í
-                // bounds.max.x ÊÇÎïÌåÔÚÊÀ½ç×ø±êÖĞ×îÓÒ±ßµÄµã
+                // 4. ï¿½ï¿½ï¿½ï¿½ï¿½Ò±ß½ç£ºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò±ï¿½ - ï¿½ï¿½ï¿½Ç°ï¿½ï¿½
+                // bounds.max.x ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò±ßµÄµï¿½
                 maxX = bgRenderer.bounds.max.x - playerHalfWidth;
 
-                Debug.Log($"±ß½çÒÑ×Ô¶¯¼ÆËã: ×ó {minX} / ÓÒ {maxX}");
+                Debug.Log($"ï¿½ß½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ {minX} / ï¿½ï¿½ {maxX}");
             }
             else
             {
-                Debug.LogError("´íÎó£º±³¾°»òÖ÷½ÇÈ±ÉÙ Renderer ×é¼ş£¡");
+                Debug.LogError("ï¿½ï¿½ï¿½ó£º±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È±ï¿½ï¿½ Renderer ï¿½ï¿½ï¿½ï¿½ï¿½");
             }
         }
         else
         {
-            Debug.LogError("ÇëÔÚ Inspector Ãæ°åÖĞ°Ñ¡¾±³¾°ÎïÌå¡¿ÍÏ½øÈ¥£¡");
+            Debug.LogError("ï¿½ï¿½ï¿½ï¿½ Inspector ï¿½ï¿½ï¿½ï¿½Ğ°Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å¡¿ï¿½Ï½ï¿½È¥ï¿½ï¿½");
         }
     }
 
     void Update()
     {
-        // 1. ½ÓÊÕÊäÈë£¬²»´¦ÀíÎïÀíÒÆ¶¯
+        // 1. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½
 
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         movement.x = horizontalInput;
         movement.y = 0;
 
-        // 2. ¶¯»­¿ØÖÆ£ºÁ¢¼´ÏìÓ¦£¬ÎŞÑÓ³Ù
+        // 2. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Ó³ï¿½
         bool isWalking = Mathf.Abs(horizontalInput) > 0.1f;
         animator.SetBool("IsWalking", isWalking);
-        // 3. ´¦ÀíÈËÎï·­×ª 
+        // 3. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï·­×ª 
         if (horizontalInput != 0)
         {
-            mySpriteRenderer.flipX = horizontalInput < 0;
+            mySpriteRenderer.flipX = horizontalInput > 0;
         }
 
     }
     void FixedUpdate()
     {
-        if (movement.x == 0)
+        Vector2 targetPos = rb.position;
+        
+        // è®¡ç®—ç›®æ ‡ä½ç½®
+        if (movement.x != 0)
         {
-            rb.velocity = new Vector2(0, rb.velocity.y);
+            targetPos += Vector2.right * movement.x * speed * Time.fixedDeltaTime;
         }
-        else
-        {
-            rb.velocity = new Vector2(movement.x * speed, rb.velocity.y);
-        }
-
-        // ÏŞÖÆÎ»ÖÃ·¶Î§
-        Vector2 clampedPos = rb.position;
-        clampedPos.x = Mathf.Clamp(clampedPos.x, minX, maxX);
-
-        // Èç¹û³¬³ö±ß½ç£¬Ç¿ÖÆĞŞÕıÎ»ÖÃ
-        if (Mathf.Abs(clampedPos.x - rb.position.x) > 0.01f)
-        {
-            rb.position = clampedPos;
-            rb.velocity = new Vector2(0, rb.velocity.y);
-        }
+        
+        // è¾¹ç•Œé™åˆ¶
+        targetPos.x = Mathf.Clamp(targetPos.x, minX, maxX);
+        
+        // ä½¿ç”¨MovePositionå®Œå…¨æ§åˆ¶ç§»åŠ¨
+        rb.MovePosition(targetPos);
     }
 
 
