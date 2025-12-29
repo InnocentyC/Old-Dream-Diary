@@ -58,8 +58,12 @@ public class TaskManager : MonoBehaviour
     public bool IsNoteViewed() => noteViewed;
     public void ShowTaskUI()
     {
-        passwordTaskText.gameObject.SetActive(true);
-        diaryTaskText.gameObject.SetActive(true);
+        this.gameObject.SetActive(true);
+        foreach (Transform child in this.transform)
+        {
+            child.gameObject.SetActive(true);
+        }
+
         UpdateTaskUI();
     }
 

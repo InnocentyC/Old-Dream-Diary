@@ -8,7 +8,7 @@ public class PlayDialogueAction : StateAction
 {
     public DialogueSession dialogue;
     public bool changeStateAfterDialogue = false;
-    public GameManager.RoomState nextState;
+  //  public GameManager.RoomState nextState;
     public override IEnumerator Execute()
     {
         if (dialogue == null) yield break;
@@ -18,7 +18,7 @@ public class PlayDialogueAction : StateAction
         GameManager.Instance.dialogueManager.StartDialogue(dialogue, () => finished = true);
         while (!finished)yield return null;
 
-        if (nextState != GameManager.RoomState.None)
-            GameManager.Instance.EnterState(nextState);
+       // if (nextState != GameManager.RoomState.None)
+          //  GameManager.Instance.EnterState(nextState);
     }
 }

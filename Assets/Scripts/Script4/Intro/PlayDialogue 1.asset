@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e31b70980884504fa309a61f273b823, type: 3}
   m_Name: PlayDialogue 1
   m_EditorClassIdentifier: 
-  triggerState: 0
+  triggerState: 1
   dialogue:
     lines:
     - speaker: 0
@@ -21,5 +21,5 @@ MonoBehaviour:
     - speaker: 0
       portrait: 0
       text: "\u6216\u8BB8\u8FDE\u4F60\u81EA\u5DF1\u8FD8\u6CA1\u6709\u610F\u8BC6\u5230\uFF0C\u8FD9\u4E00\u5929\u591A\u4E48\u4E0D\u540C\u3002"
-  changeStateAfterDialogue: 1
-  nextState: 2
+  changeStateAfterDialogue: 0
+  nextState: 0

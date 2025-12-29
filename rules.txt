@@ -1,0 +1,29 @@
+R1｜交互物体零决策
+
+InteractableItem 只能：检测可交互 → 上报请求
+
+禁止：打开 UI / 播放对话 / 推进状态 / 收集任务
+
+R2｜状态唯一入口
+
+只有 GameManager.EnterState() 能改 RoomState
+
+Action 可以“请求改状态”，但不绕过 GameManager
+
+R3｜行为只在 Action
+
+UI、对话、视频、音效、等待，全部是 StateAction
+
+Action 只做一件事，可串行、可等待
+
+R4｜对话=阻断源
+
+UIBlock 的 Push/Pop 只在 Dialogue/Action 内
+
+任何流程等待，都用 WaitAction 或 Action 内部等待
+
+R5｜不重复触发
+
+一次交互，只产生一次业务入口
+
+禁止“点击时 + 对话结束后”双触发

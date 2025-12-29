@@ -8,6 +8,8 @@ public class TaskUIAction : StateAction
 {
     public override IEnumerator Execute()
     {
+        while (GameManager.Instance.IsUIBlocking)
+            yield return null;
         GameManager.Instance.taskManager.ShowTaskUI();
         yield break;
     }

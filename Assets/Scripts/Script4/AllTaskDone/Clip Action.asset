@@ -10,10 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e25932e895610f442a8a9feb0ba92796, type: 3}
-  m_Name: PlayAnimation
+  m_Name: Clip Action
   m_EditorClassIdentifier: 
   triggerState: 5
-  nextState: 0
-  rawImage: {fileID: 0}
-  videoPlayer: {fileID: 0}
   waitForAnimation: 1

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class NoteController : MonoBehaviour
@@ -9,7 +7,9 @@ public class NoteController : MonoBehaviour
     [Header("UI References")]
     public NoteUI noteUI;
     public DialogueSession stickyNoteDialogue;
-    
+
+    private bool firstTimeHintCompleted = false; // 第一次 hint 完成标记
+
     private void Awake()
     {
         if (Instance == null)
@@ -25,15 +25,9 @@ public class NoteController : MonoBehaviour
     {
         Debug.Log("[StickyNoteFlow] Begin");
 
-        if (noteUI == null)
+        if (noteUI == null || stickyNoteDialogue == null)
         {
-            Debug.LogError("[StickyNoteFlow] noteUI is NULL!");
-            return;
-        }
-
-        if (stickyNoteDialogue == null)
-        {
-            Debug.LogError("[StickyNoteFlow] stickyNoteDialogue is NULL!");
+            Debug.LogError("[StickyNoteFlow] noteUI or stickyNoteDialogue is NULL!");
             return;
         }
 
@@ -58,6 +52,11 @@ public class NoteController : MonoBehaviour
 
         // ④ 推进游戏
         GameManager.Instance.OnItemInteracted(ItemType.Note,null);
+        if (!firstTimeHintCompleted)
+        {
+            GameManager.Instance.EnterState(GameManager.RoomState.PasswordCollecting);
+            firstTimeHintCompleted = true;
+        }
     }
 
 }

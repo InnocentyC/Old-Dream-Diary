@@ -4,7 +4,7 @@ using System.Collections;
 public abstract class StateAction : ScriptableObject
 {
 
-    [Header("在哪个房间状态下触发")]
+   // [Header("在哪个房间状态下触发")]
     public GameManager.RoomState triggerState;
     /// 当进入对应 RoomState 时执行
     public abstract IEnumerator Execute();

@@ -2,16 +2,19 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;        
+using UnityEngine.Video;     
 
 
-
-public class GameManager: MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public string Name;
     public static event Action<RoomState> OnRoomStateChanged;
-
-
+    public PlayAnimationAction playAnimAction;
+    public RawImage uiRawImage;
+    public VideoPlayer uiVideoPlayer;
+    public RenderTexture uiRenderTexture;
     //房间状态机
     public enum RoomState
     {
@@ -46,17 +49,19 @@ public class GameManager: MonoBehaviour
 
 
     private void Awake()
+    {
+        if (Instance == null)
         {
-           if (Instance == null)
-           {
-               Instance = this;
-               DontDestroyOnLoad(gameObject);
-           }
-           else Destroy(gameObject);
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
+        else Destroy(gameObject);
+    }
     private void Start()
     {
         EnterState(RoomState.Intro);
+        Debug.Log($"Screen Size: {Screen.width} x {Screen.height}, Aspect: {(float)Screen.width / Screen.height}");
+
     }
 
     public void PushUIBlock(string source = "Unknown")
@@ -90,14 +95,16 @@ public class GameManager: MonoBehaviour
     #region ===== State Control =====
     private void TryPlayStateEvent(RoomState state)
     {
+        if (DialogueManager.instance.IsDialogueActive)
+            return; // 当前对话在进行中，延迟状态事件
         foreach (var ev in roomStateEvents)
         {
             if (ev.triggerState == state && ev.actions != null)
             {
-                foreach (var action in ev.actions)
-                {                    
-                    StartCoroutine(ExecuteActionsSequentially(ev.actions));
-                }
+                // foreach (var action in ev.actions)
+                //{                    
+                StartCoroutine(ExecuteActionsSequentially(ev.actions));
+                //}
             }
         }
     }
@@ -128,7 +135,13 @@ public class GameManager: MonoBehaviour
     }
 
     #endregion
-    
+    //统一入口
+    public void RequestInteraction(ItemType type, InteractableItem item)
+    {
+        if (IsUIBlocking) return;
+        OnItemInteracted(type, item); // 你已有的逻辑入口
+    }
+
 
     #region ===== Interaction Entry =====
 
@@ -146,22 +159,22 @@ public class GameManager: MonoBehaviour
                 }
             }
         }
-    
-     switch (CurrentState)
-     {
-         case RoomState.NoteLocked:
-             HandleNoteLocked(type);
-             break;
 
-         case RoomState.PasswordCollecting:
-             HandlePasswordCollecting(type);
-             break;
+        switch (CurrentState)
+        {
+            case RoomState.NoteLocked:
+                HandleNoteLocked(type);
+                break;
 
-         case RoomState.AllTasksDone:
-             HandleAllTasksDone(type);
-             break;
+            case RoomState.PasswordCollecting:
+                HandlePasswordCollecting(type);
+                break;
 
-     }
+            case RoomState.AllTasksDone:
+                HandleAllTasksDone(type);
+                break;
+
+        }
     }
     private IEnumerator ExecuteActions(List<StateAction> actions)
     {
@@ -176,80 +189,118 @@ public class GameManager: MonoBehaviour
     #endregion
 
 
-    
-        #region ===== State Handlers =====
 
-       private void HandleNoteLocked(ItemType type)
+    #region ===== State Handlers =====
+
+    private void HandleNoteLocked(ItemType type)
+    {
+        if (type == ItemType.Bed)
         {
-
-            if (type == ItemType.Note)
+            var session = new DialogueSession
             {
-                if (!taskManager.IsNoteViewed() && !taskManager.IsNoteViewed())
+                lines = new DialogueLine[]
                 {
-                    taskManager.ViewNote();
-                    EnterState(RoomState.PasswordCollecting);
+                    new DialogueLine
+                    {
+                        speaker = SpeakerNameOption.MainController,
+                        text = "好像还有什么东西没看完……",
+                        portrait = PortraitOption.Child_Neutral
+                    }
                 }
-                return;
-            }
+            };
+            StartCoroutine(DelayedStartDialogue(session));
 
-            if (type == ItemType.Beads)
-            {
-                taskManager.CollectDiary();
-                return;
-            }
-
-            Debug.Log("请先查看便利贴");
+            return;
         }
-        private void HandlePasswordCollecting(ItemType type)
+
+        if (type == ItemType.Note)
         {
-            if (type == ItemType.Bed)
+            if (!taskManager.IsNoteViewed())
             {
-                //dialogueManager.PlayOneLine("好像还有什么东西没看完……");
-                return;
+                taskManager.ViewNote();
+                //EnterState(RoomState.PasswordCollecting);
             }
-            if (type == ItemType.FishTank ||
-                type == ItemType.Doll ||
-                type == ItemType.Award)
-            {
-                taskManager.CollectPassword(type);
-            }
-            else if (type == ItemType.Beads)
-            {
-                taskManager.CollectDiary();
-            }
-
-            if (taskManager.AreAllTasksCompleted())
-            {
-                 StartCoroutine(WaitForDialogueThenAllTasksDone());
-            }
+            return;
         }
-        private IEnumerator WaitForDialogueThenAllTasksDone()
+
+        if (type == ItemType.Beads)
         {
-            // 等待当前 UIBlock 消失
-            while (IsUIBlocking)
-                yield return null;
-
-            EnterState(RoomState.AllTasksDone);
+            taskManager.CollectDiary();
+            return;
         }
-        private void HandleAllTasksDone(ItemType type)//交互结束
+
+        Debug.Log("请先查看便利贴");
+    }
+    private IEnumerator DelayedStartDialogue(DialogueSession session)
+    {
+        yield return null; // 等一帧，让 dialoguePanel 激活
+
+        // 调用 DialogueManager 的 StartDialogue
+        dialogueManager.StartDialogue(session, () =>
+        {
+            Debug.Log("床提示对话播放完成");
+        });
+    }
+
+    private void HandlePasswordCollecting(ItemType type)
+    {
+        if (type == ItemType.Bed)
+        {
+            var session = new DialogueSession
             {
-
-
-                if (type == ItemType.Bed)
+                lines = new DialogueLine[]
                 {
-                    EnterState(RoomState.ReadyToExit);
-                   // PlayExit();
+                    new DialogueLine
+                    {
+                        speaker = SpeakerNameOption.MainController,
+                        text = "好像还有什么东西没看完……",
+                        portrait = PortraitOption.Child_Neutral
+                    }
                 }
-            }
+            };
+            StartCoroutine(DelayedStartDialogue(session));
 
-        #endregion
-        #region ===== Exit =====
-
-        private void PlayExit()
-        {
-            
+            return;
         }
+        if (type == ItemType.FishTank ||
+            type == ItemType.Doll ||
+            type == ItemType.Award)
+        {
+            taskManager.CollectPassword(type);
+        }
+        else if (type == ItemType.Beads)
+        {
+            taskManager.CollectDiary();
+        }
+        if(type == ItemType.NoteBook)
+        {
+            // 不再自动调用 NoteController.Begin()
+            Debug.Log("[GameManager] Note interacted, do not auto open big UI");
+  
+        }
+        if (taskManager.AreAllTasksCompleted())
+        {
+            StartCoroutine(WaitForDialogueThenAllTasksDone());
+        }
+    }
+    private IEnumerator WaitForDialogueThenAllTasksDone()
+    {
+        // 等待当前 UIBlock 消失
+        while (IsUIBlocking)
+            yield return null;
+        yield return null;
 
-        #endregion
-       
+        EnterState(RoomState.AllTasksDone);
+    }
+    private void HandleAllTasksDone(ItemType type)//交互结束
+    {
+
+
+        if (type == ItemType.Bed)
+        {
+            EnterState(RoomState.ReadyToExit);
+            TryPlayStateEvent(CurrentState);
+        }
+    }
+    #endregion
 }

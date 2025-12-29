@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c8485c44fe0f8c4aa7d288a782527af, type: 3}
   m_Name: Wait
   m_EditorClassIdentifier: 
-  triggerState: 0
-  duration: 0.5
+  triggerState: 1
+  duration: 0.7

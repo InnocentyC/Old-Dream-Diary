@@ -65,24 +65,25 @@ public class InteractableItem : MonoBehaviour
     // === 鼠标点击逻辑 ===
     private void OnMouseDown()
     {
+        /*
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.OnItemInteracted(type, this);
+            return;
         }
-        
+        */
         if (GameManager.Instance.IsUIBlocking)
         {
             Debug.Log("[BLOCKED] by UIBlock");
             return;
         }
         Debug.Log($"[CLICK] {type} OnMouseDown| UIBlock={GameManager.Instance.uiBlockCount}");
-
+        
         if (!canInteract)
         {
             Debug.Log("[BLOCKED] not in range");
             return;
         }
-
+        
         if (DialogueManager.instance.IsDialogueActive)
         {
             Debug.Log("[BLOCKED] dialogue");
@@ -101,8 +102,16 @@ public class InteractableItem : MonoBehaviour
         }
         if (type == ItemType.NoteBook)
         {
-            Debug.Log("[NOTEBOOK] begin open logic");
-            NotebookUI.Instance.Open();
+            if (!NotebookUI.Instance.HasOpenedOnce)
+            {
+                // 第一次打开 Notebook → 播放 hint
+                NotebookUI.Instance.Open();
+            }
+            else
+            {
+                // 第二次及以后 → 可以点击便利贴
+                NotebookUI.Instance.OnStickyNoteClicked();
+            }
             return;
         }
 
@@ -117,48 +126,22 @@ public class InteractableItem : MonoBehaviour
             return;
 
         }
+        GameManager.Instance.RequestInteraction(type, this);
 
-         StartConversation();  
+
+       // StartConversation();  
         
     }
 
-
-    /*private void OpenPopup()
+    public void TriggerClick()
     {
-        if (popupPanel == null) return;
+        OnMouseDown(); // 调用原本的点击逻辑
+    }
 
-        popupPanel.SetActive(true);
-        GameManager.Instance.PushUIBlock();
-        var text = popupPanel.GetComponentInChildren<TextMeshProUGUI>();
-        if (text != null)
-            text.text = popupText.Replace(@"\n", "\n");
-        var closeBtn = popupPanel.GetComponentInChildren<Button>();
-        if (closeBtn != null)
-        {
-            closeBtn.onClick.RemoveAllListeners();
-            closeBtn.onClick.AddListener(() =>
-            {
-                GameManager.Instance.PopUIBlock();
-                popupPanel.SetActive(false);
 
-                StartConversation();
-            });
-        }
-    }*/
-    // 关闭按钮回调
-   /* public void OnClosePopupButtonClicked()
-    {
-        if (popupPanel == null) return;
 
-        GameManager.Instance.PopUIBlock();
 
-        popupPanel.SetActive(false);
 
-        OnPopupClosedEvent?.Invoke(); // 触发订阅事件
-        StartConversation();
-
-    }*/
-  
     #region === Dialogue ===
 
     private void StartConversation()

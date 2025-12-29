@@ -1,7 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D; // Pixel Perfect Camera
 
+[RequireComponent(typeof(Camera))]
+[RequireComponent(typeof(PixelPerfectCamera))]
 public class CameraFollow : MonoBehaviour
 {
 
@@ -17,6 +18,8 @@ public class CameraFollow : MonoBehaviour
     // 你的图片素材的 PPU 
     public float PPU = 100f;
 
+
+
     private float camWidth;
     private float minX, maxX;
     private float fixedY; // 固定的 Y 轴
@@ -24,12 +27,22 @@ public class CameraFollow : MonoBehaviour
     // SmoothDamp 需要的中间变量，用来记录当前速度
     private Vector3 velocity = Vector3.zero;
 
+    private Camera cam;
+    private PixelPerfectCamera ppc;
+
     void Start()
     {
-        Camera cam = GetComponent<Camera>();
-        float camHeight = cam.orthographicSize;
-        camWidth = camHeight * cam.aspect;
+        cam = GetComponent<Camera>();
+        ppc = GetComponent<PixelPerfectCamera>();
 
+        //float camHeight = cam.orthographicSize;
+        //camWidth = camHeight * cam.aspect;
+        if (cam == null)
+        {
+            Debug.LogError("CameraFollow 必须挂在带 Camera 的对象上！");
+            enabled = false;
+            return;
+        }
         if (background != null)
         {
             Bounds bgBounds = background.bounds;
@@ -41,6 +54,11 @@ public class CameraFollow : MonoBehaviour
             // 2. 【关键】锁定高度为背景的中心高度
             // 这样相机永远正对着背景图的中间
             fixedY = bgBounds.center.y;
+
+            // 计算横向 Clamp 范围（让 Pixel Perfect Camera 控制 Size）
+            float camHalfWidth = cam.orthographicSize * cam.aspect;
+            minX = bgBounds.min.x + camHalfWidth;
+            maxX = bgBounds.max.x - camHalfWidth;
         }
         else
         {
@@ -55,7 +73,9 @@ public class CameraFollow : MonoBehaviour
         // 1. 确定目标位置
         // 我们希望相机去哪里？去主角的X，固定的Y，原本的Z
         Vector3 targetPos = new Vector3(target.position.x, fixedY, transform.position.z);
-
+        float camHalfWidth = cam.orthographicSize * cam.aspect;
+        minX = background.bounds.min.x + camHalfWidth;
+        maxX = background.bounds.max.x - camHalfWidth;
 
 
         // 2. 限制目标位置 (Clamp)
@@ -70,13 +90,12 @@ public class CameraFollow : MonoBehaviour
         }
 
 
-        Vector3 finalPos = Vector3.SmoothDamp(transform.position, targetPos, ref velocity, smoothTime);
 
         // 3. 使用 SmoothDamp 进行丝滑移动
         // 它可以自动处理当前位置到目标位置的平滑过渡，彻底消除抖动
-        float pixelX = Mathf.Round(finalPos.x * PPU) / PPU;
-        float pixelY = Mathf.Round(finalPos.y * PPU) / PPU;
+        //float pixelX = Mathf.Round(finalPos.x * PPU) / PPU;
+        //float pixelY = Mathf.Round(finalPos.y * PPU) / PPU;
 
-        transform.position = new Vector3(pixelX, pixelY, -10f);
+        transform.position = Vector3.SmoothDamp(transform.position, targetPos, ref velocity, smoothTime);
     }
 }
