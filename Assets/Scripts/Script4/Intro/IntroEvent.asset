@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5eba88f404c82c249ad90bd246b241ca, type: 3}
+  m_Name: IntroEvent
+  m_EditorClassIdentifier: 
+  triggerState: 1
+  actions:
+  - {fileID: 11400000, guid: 01ef02dad7c7dc845b352bbb9bf8b1c5, type: 2}
+  - {fileID: 11400000, guid: ae23a81fa21b3c64c86ced5b20ab6f37, type: 2}
+  - {fileID: 11400000, guid: 7d33707a978212649b393ac2a56ee4ff, type: 2}
+  - {fileID: 11400000, guid: ae23a81fa21b3c64c86ced5b20ab6f37, type: 2}
+  - {fileID: 11400000, guid: 7ac8a59537c97f344af4d9a52263d137, type: 2}
+  - {fileID: 11400000, guid: 253bf8c9c5853c2499e0274b28f11620, type: 2}
