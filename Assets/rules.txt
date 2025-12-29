@@ -1,0 +1,36 @@
+Action =「状态进入后，自动执行的一段演出或流程」
+我把项目划分为 5 层，每层作用、核心对象和调度方式都列清楚：
+
+层级	核心脚本	作用	调度方式
+1️⃣ 世界物体 / 输入层	InteractableItem.cs	玩家可交互物体，检测是否可点、上报交互请求	调用 GameManager.RequestInteraction(ItemType, InteractableItem)
+2️⃣ 流程中枢 / 状态机	GameManager.cs	控制房间状态 (RoomState)、任务推进、UI阻断、调用状态事件	通过 EnterState(RoomState) 触发 TryPlayStateEvent 执行 RoomStateEvent，并根据当前状态调用 HandleXXX 方法处理交互
+3️⃣ 状态驱动行为	StateAction.cs + 各子类（PlayDialogueAction、PlayAnimationAction、SceneTransitionAction、TaskUIAction、WaitAction）	封装“进入状态后自动执行”的行为（对话、动画、任务、状态推进）	RoomStateEvent.actions 顺序执行（ExecuteActionsSequentially 协程）
+4️⃣ UI / 面板	NotebookUI.cs、NoteController.cs、PopupSystem.cs	处理具体交互界面、便利贴、日记弹窗等	由 GameManager / Action / 玩家点击触发；UIBlock 控制世界物体是否可交互
+5️⃣ 任务 / 数据	TaskManager.cs	维护任务状态、已查看便利贴、收集密码等	GameManager 调用 HandleXXX 或 Action 完成任务推进
+二、整个交互调度流程
+
+以玩家点击物体（Notebook 或其他 Item）为例：
+
+玩家点击物体 (InteractableItem.OnMouseDown)
+    ↓
+InteractableItem 检查可交互条件
+    ↓
+RequestInteraction(ItemType, InteractableItem) -> GameManager
+    ↓
+GameManager.OnItemInteracted(ItemType, InteractableItem)
+    ├─ 如果物体有 stateEvents -> 执行 ExecuteActions
+    └─ 根据 CurrentState 调用对应 HandleXXX
+        ├─ HandleNoteLocked
+        ├─ HandlePasswordCollecting
+        └─ HandleAllTasksDone
+    ↓
+必要时 TaskManager 更新任务
+    ↓
+必要时 EnterState 切换状态
+    ↓
+状态切换时触发 RoomStateEvent -> 执行 StateAction 列表（协程顺序执行）
+UI 阻断机制
+
+PushUIBlock("Source") / PopUIBlock("Source")
+
+当 IsUIBlocking = true 时，RequestInteraction 不会响应
