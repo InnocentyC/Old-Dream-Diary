@@ -88,7 +88,7 @@ public class RealityInteractableItem : MonoBehaviour
         {
             // 如果没有RealityGameManager，为了测试暂时允许所有交互
             allowedByState = true;
-            Debug.LogWarning("未找到RealityGameManager，允许所有交互进行测试");
+
         }
         
         canInteract = allowedByState && isPlayerNearby;
