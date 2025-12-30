@@ -3,15 +3,35 @@ using UnityEngine;
 public class RealityGameManager : MonoBehaviour
 {
     public static RealityGameManager Instance;
-    
+
     [Header("成年主角立绘")]
-    public Sprite adult_neutral;    // MC_6 无表情
-    public Sprite adult_tired;       // MC_1 疲惫
-    public Sprite adult_confused2;   // MC_2 疑惑
-    public Sprite adult_confused3;   // MC_3 疑惑
-    public Sprite adult_angry;        // 生气
-    public Sprite adult_surprised;   // 惊讶
-    public Sprite adult_confused_hand;    // 困惑（带手）
+    public Sprite adult_neutral;        // MC_6 无表情
+    public Sprite adult_tired;          // MC_1 疲惫
+    public Sprite adult_confused;       // MC_2 疑惑
+    public Sprite adult_angry;          // 生气
+    public Sprite adult_surprised;      // 惊讶
+    public Sprite adult_confused_hand; // 困惑（带手）
+
+    // 获取AdultPortraitOption对应的Sprite
+    public Sprite GetPortrait(AdultPortraitOption portraitOption)
+    {
+        switch (portraitOption)
+        {
+            case AdultPortraitOption.Adult_Neutral: return adult_neutral;
+            case AdultPortraitOption.Adult_Tired: return adult_tired;
+            case AdultPortraitOption.Adult_Confused: return adult_confused;
+            case AdultPortraitOption.Adult_Angry: return adult_angry;
+            case AdultPortraitOption.Adult_Surprised: return adult_surprised;
+            case AdultPortraitOption.Adult_Confused_Hand: return adult_confused_hand;
+            default: return null;
+        }
+    }
+
+    // 获取SpeakerName（为了兼容新的DialogueLine）
+    public string GetSpeakerName(SpeakerNameOption speakerOption)
+    {
+        return "雨漩"; // Script3中成年主控都叫"主控"
+    }
     
     // Reality场景状态
     public enum RealityState
@@ -21,7 +41,7 @@ public class RealityGameManager : MonoBehaviour
         AllInteractionsDone,// 所有交互完成
         ReadyToSleep       // 准备睡觉，进入下阶段
     }
-    
+
     public RealityState CurrentState { get; private set; }
     public bool IsUIBlocking { get; private set; }
     
@@ -30,6 +50,10 @@ public class RealityGameManager : MonoBehaviour
     
     [Header("交互点数量")]
     public int totalInteractions = 5; // Bed, Computer, Notebook, FishDecoration, Medicine
+
+    [Header("视频播放")]
+    public GameObject videoPlayerObject;  // VideoPlayer 所在的游戏对象
+    public UnityEngine.Video.VideoPlayer videoPlayer;  // VideoPlayer 组件
     
     private void Awake()
     {
@@ -53,31 +77,32 @@ public class RealityGameManager : MonoBehaviour
     private void StartRealityIntro()
     {
         EnterState(RealityState.Intro);
-        
+
         // 开场对话
         var introDialogue = new DialogueSession
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="……做不完的工作，又是那么晚才下班。到底在坚持什么呢。",
-                    speakerName="主控",
-                    portrait=adult_neutral // MC_6
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    adultPortrait=AdultPortraitOption.Adult_Neutral,
+                    text="……做不完的工作，又是那么晚才下班。到底在坚持什么呢。"
                 }
             }
         };
-        
-        if (DialogueManager.instance != null)
+
+        // 确保DialogueManager存在
+        if (DialogueManager.instance == null)
         {
-            DialogueManager.instance.StartDialogue(introDialogue, () => {
-                EnterState(RealityState.Exploring);
-            });
-        }
-        else
-        {
-            Debug.LogWarning("未找到DialogueManager，直接进入探索模式");
+            Debug.LogError("未找到DialogueManager！请在Scene3中添加DialogueManager GameObject");
+            // 临时方案：直接进入探索模式
             EnterState(RealityState.Exploring);
+            return;
         }
+
+        DialogueManager.instance.StartDialogue(introDialogue, () => {
+            EnterState(RealityState.Exploring);
+        });
     }
     
     public void EnterState(RealityState newState)
@@ -177,14 +202,14 @@ public class RealityGameManager : MonoBehaviour
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="该睡觉了，但是丝毫不困。不过最近脑袋越来越重，好像忘记了什么一样。找找看有什么可以让我想起来关于过去的画面……",
-                    speakerName="主控",
-                    portrait=adult_tired // MC_1
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    adultPortrait=AdultPortraitOption.Adult_Tired,
+                    text="该睡觉了，但是丝毫不困。不过最近脑袋越来越重，好像忘记了什么一样。找找看有什么可以让我想起来关于过去的画面……"
                 }
             }
         };
-        
+
         DialogueManager.instance.StartDialogue(dialogue);
     }
     
@@ -194,29 +219,29 @@ public class RealityGameManager : MonoBehaviour
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="看见电脑感觉我的价值只有工作。",
-                    speakerName="主控",
-                    portrait=adult_neutral // MC_6
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    adultPortrait=AdultPortraitOption.Adult_Neutral,
+                    text="看见电脑感觉我的价值只有工作。"
                 },
-                new DialogueLine{ 
-                    text="从前的自己好像从来没有这样想过。",
-                    speakerName="主控",
-                    portrait=adult_neutral // MC_6
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    adultPortrait=AdultPortraitOption.Adult_Neutral,
+                    text="从前的自己好像从来没有这样想过。"
                 },
-                new DialogueLine{ 
-                    text="从那一刻开始，发生了这样可怕的变化。",
-                    speakerName="主控",
-                    portrait=adult_neutral // MC_6
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    adultPortrait=AdultPortraitOption.Adult_Neutral,
+                    text="从那一刻开始，发生了这样可怕的变化。"
                 },
-                new DialogueLine{ 
-                    text="而我竟然也这样变得麻木。",
-                    speakerName="主控",
-                    portrait=adult_neutral // MC_6
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    adultPortrait=AdultPortraitOption.Adult_Neutral,
+                    text="而我竟然也这样变得麻木。"
                 }
             }
         };
-        
+
         DialogueManager.instance.StartDialogue(dialogue);
     }
     
@@ -226,19 +251,19 @@ public class RealityGameManager : MonoBehaviour
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="一本本子，还是带密码锁的。",
-                    speakerName="主控",
-                    portrait=adult_confused3 // MC_3
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    adultPortrait=AdultPortraitOption.Adult_Confused_Hand,
+                    text="一本本子，还是带密码锁的。"
                 },
-                new DialogueLine{ 
-                    text="尝试一下...想不起来密码了。",
-                    speakerName="主控",
-                    portrait=adult_confused3 // MC_3
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    adultPortrait=AdultPortraitOption.Adult_Confused_Hand,
+                    text="尝试一下...想不起来密码了。"
                 }
             }
         };
-        
+
         DialogueManager.instance.StartDialogue(dialogue);
     }
     
@@ -248,19 +273,19 @@ public class RealityGameManager : MonoBehaviour
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="桌子上是热带鱼的全息摆件，总感觉在家里见过真的。",
-                    speakerName="主控",
-                    portrait=adult_tired // MC_1
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    adultPortrait=AdultPortraitOption.Adult_Tired,
+                    text="桌子上是热带鱼的全息摆件，总感觉在家里见过真的。"
                 },
-                new DialogueLine{ 
-                    text="现在要看热带鱼，只能去水族馆才能看见了吧。",
-                    speakerName="主控",
-                    portrait=adult_tired // MC_1
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    adultPortrait=AdultPortraitOption.Adult_Tired,
+                    text="现在要看热带鱼，只能去水族馆才能看见了吧。"
                 }
             }
         };
-        
+
         DialogueManager.instance.StartDialogue(dialogue);
     }
     
@@ -270,19 +295,19 @@ public class RealityGameManager : MonoBehaviour
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="要见底了，还是吃两颗吧。",
-                    speakerName="主控",
-                    portrait=adult_tired // MC_1
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    adultPortrait=AdultPortraitOption.Adult_Tired,
+                    text="要见底了，还是吃两颗吧。"
                 },
-                new DialogueLine{ 
-                    text="毕竟，明天早上还要起床。",
-                    speakerName="主控",
-                    portrait=adult_tired // MC_1
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    adultPortrait=AdultPortraitOption.Adult_Tired,
+                    text="毕竟，明天早上还要起床。"
                 }
             }
         };
-        
+
         DialogueManager.instance.StartDialogue(dialogue);
     }
     
@@ -292,18 +317,18 @@ public class RealityGameManager : MonoBehaviour
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="可能是太累了，毕竟刚进入新城区工作，我还要成为新城区的公民。",
-                    speakerName="主控",
-                    portrait=adult_neutral // MC_6
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    adultPortrait=AdultPortraitOption.Adult_Neutral,
+                    text="可能是太累了，毕竟刚进入新城区工作，我还要成为新城区的公民。"
                 }
             }
         };
-        
+
         DialogueManager.instance.StartDialogue(dialogue, () => {
             // 转场 入睡动画 DH_001.MP4
             Debug.Log("播放入睡动画 DH_001.MP4");
-            
+
             // 然后切换到下一个场景（Script4）
             UnityEngine.SceneManagement.SceneManager.LoadScene("Script4");
         });
@@ -324,68 +349,139 @@ public class RealityGameManager : MonoBehaviour
     private void CheckAllInteractionsComplete()
     {
         int completedCount = 0;
+        Debug.Log("=== 检查所有交互完成状态 ===");
+        Debug.Log($"interactionCompleted.Length: {interactionCompleted.Length}");
+        Debug.Log($"totalInteractions: {totalInteractions}");
+        Debug.Log($"CurrentState: {CurrentState}");
+
         // 检查所有物品的交互状态
         for (int i = 0; i < interactionCompleted.Length && i < totalInteractions; i++)
         {
-            if (interactionCompleted[i]) 
+            Debug.Log($"索引 {i}: {(RealityItemType)i} - 已完成: {interactionCompleted[i]}");
+            if (interactionCompleted[i])
             {
                 completedCount++;
-                Debug.Log($"已完成的物品: {(RealityItemType)i}");
             }
         }
-        
+
         Debug.Log($"已完成的交互: {completedCount}/{totalInteractions}");
-        
+
         // 如果所有物品都交互完了
         if (completedCount >= totalInteractions && CurrentState == RealityState.Exploring)
         {
-            Debug.Log("所有交互完成，触发下一步剧情");
+            Debug.Log("✓ 所有交互完成，触发下一步剧情");
             EnterState(RealityState.AllInteractionsDone);
         }
+        else
+        {
+            Debug.Log($"✗ 条件不满足：completedCount >= totalInteractions? {completedCount >= totalInteractions}, CurrentState == Exploring? {CurrentState == RealityState.Exploring}");
+        }
     }
-    
+
     private void TriggerAllDoneDialogue()
     {
+        Debug.Log("TriggerAllDoneDialogue 被调用");
         // 先播放花屏效果和童年视频
         StartCoroutine(PlayChildhoodMemorySequence());
     }
-    
+
     private System.Collections.IEnumerator PlayChildhoodMemorySequence()
     {
+        Debug.Log("PlayChildhoodMemorySequence 开始执行");
+
+        // 确保之前的对话已经结束
+        while (DialogueManager.instance != null && DialogueManager.instance.IsDialogueActive)
+        {
+            Debug.Log("等待上一场对话结束...");
+            yield return null;
+        }
+
         // 画面短暂出现花屏，闪过童年房间
         Debug.Log("播放花屏效果");
-        
+
         // 等待花屏效果
         yield return new WaitForSeconds(1.0f);
-        
+
         // 播放童年房间动画 DH_002.MP4
         Debug.Log("播放童年房间动画 DH_002.MP4");
-        
-        // 等待视频播放完成
-        yield return new WaitForSeconds(3.0f);
-        
+        Debug.Log($"videoPlayerObject: {(videoPlayerObject != null ? videoPlayerObject.name : "null")}");
+        Debug.Log($"videoPlayer: {(videoPlayer != null ? "not null" : "null")}");
+
+        // 禁用玩家控制
+        SetUIBlocking(true);
+
+        // 播放视频
+        if (videoPlayerObject != null && videoPlayer != null)
+        {
+            Debug.Log("开始播放视频");
+            videoPlayerObject.SetActive(true);
+
+            // 准备视频（确保视频加载完成）
+            videoPlayer.Prepare();
+
+            // 等待视频准备好
+            while (!videoPlayer.isPrepared)
+            {
+                yield return null;
+            }
+
+            // 开始播放
+            videoPlayer.Play();
+
+            Debug.Log($"视频长度: {videoPlayer.length} 秒");
+
+            // 使用视频长度 + 少量缓冲时间来等待
+            float waitTime = (float)videoPlayer.length + 0.5f;
+            Debug.Log($"等待视频播放 {waitTime} 秒");
+
+            yield return new WaitForSeconds(waitTime);
+
+            Debug.Log("视频播放完成");
+
+            // 隐藏视频
+            videoPlayerObject.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning("未找到 videoPlayerObject 或 videoPlayer，跳过视频播放");
+        }
+
+        // 启用玩家控制
+        SetUIBlocking(false);
+
+        // 等待一帧，确保状态更新
+        yield return null;
+
         // 显示幻觉后的对话
         var hallucinationDialogue = new DialogueSession
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="刚刚，好像出现了幻觉。",
-                    speakerName="主控",
-                    portrait=adult_confused2 // MC_2
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    adultPortrait=AdultPortraitOption.Adult_Confused,
+                    text="刚刚，好像出现了幻觉。"
                 },
-                new DialogueLine{ 
-                    text="算了，一定是太累了。先睡一觉吧。",
-                    speakerName="主控",
-                    portrait=adult_confused2 // MC_2
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    adultPortrait=AdultPortraitOption.Adult_Confused,
+                    text="算了，一定是太累了。先睡一觉吧。"
                 }
             }
         };
-        
-        DialogueManager.instance.StartDialogue(hallucinationDialogue, () => {
-            // 进入可以睡觉的状态
+
+        if (DialogueManager.instance != null)
+        {
+            DialogueManager.instance.StartDialogue(hallucinationDialogue, () => {
+                // 进入可以睡觉的状态
+                EnterState(RealityState.ReadyToSleep);
+            });
+        }
+        else
+        {
+            Debug.LogError("未找到 DialogueManager！");
             EnterState(RealityState.ReadyToSleep);
-        });
+        }
     }
     
     private void RefreshAllInteractables()

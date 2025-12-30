@@ -7,7 +7,8 @@ public class StartSceneManager : MonoBehaviour
 {
     [Header("UI组件")]
     public GameObject startButton;  // 开始按钮
-    public CanvasGroup canvasGroup;  // 用于淡出效果
+    public GameObject fadePanel;  // 黑色遮罩面板（覆盖整个屏幕）
+    public CanvasGroup fadeCanvasGroup;  // 遮罩面板的CanvasGroup（用于淡入）
     public Animator transitionAnimator;  // 转场动画（如果有）
 
     [Header("设置")]
@@ -27,9 +28,19 @@ public class StartSceneManager : MonoBehaviour
                 button.onClick.AddListener(OnStartButtonClicked);
             }
         }
+
+        // 初始时遮罩面板完全透明
+        if (fadeCanvasGroup != null)
+        {
+            fadeCanvasGroup.alpha = 0f;
+        }
+        if (fadePanel != null)
+        {
+            fadePanel.SetActive(true);
+        }
     }
 
-    private void OnStartButtonClicked()
+    public void OnStartButtonClicked()
     {
         if (isTransitioning) return;  // 防止重复点击
 
@@ -51,19 +62,19 @@ public class StartSceneManager : MonoBehaviour
             }
         }
 
-        // 2. 开始淡出效果
+        // 2. 黑色遮罩淡入（覆盖整个屏幕）
         Debug.Log("开始淡出效果");
-        
+
         if (transitionAnimator != null)
         {
             // 使用Animator做转场效果
             transitionAnimator.SetTrigger("FadeOut");
             yield return new WaitForSeconds(1.5f);  // 等待动画完成
         }
-        else if (canvasGroup != null)
+        else if (fadeCanvasGroup != null)
         {
-            // 使用CanvasGroup做淡出效果
-            yield return StartCoroutine(FadeOut());
+            // 使用CanvasGroup做黑色遮罩淡入
+            yield return StartCoroutine(FadeInOverlay());
         }
         else
         {
@@ -76,18 +87,33 @@ public class StartSceneManager : MonoBehaviour
         SceneManager.LoadScene(nextSceneName);
     }
 
-    private IEnumerator FadeOut()
+    private IEnumerator FadeInOverlay()
     {
+        // 初始时不阻挡射线，让按钮可以点击
+        if (fadeCanvasGroup != null)
+        {
+            fadeCanvasGroup.blocksRaycasts = false;
+        }
+
         float elapsedTime = 0f;
-        
+
+        // 从透明(0) 淡入到完全黑色(1)
         while (elapsedTime < fadeDuration)
         {
             elapsedTime += Time.deltaTime;
-            float alpha = Mathf.Lerp(1f, 0f, elapsedTime / fadeDuration);
-            canvasGroup.alpha = alpha;
+            float alpha = Mathf.Lerp(0f, 1f, elapsedTime / fadeDuration);
+
+            if (fadeCanvasGroup != null)
+            {
+                fadeCanvasGroup.alpha = alpha;
+            }
+
             yield return null;
         }
-        
-        canvasGroup.alpha = 0f;
+
+        if (fadeCanvasGroup != null)
+        {
+            fadeCanvasGroup.alpha = 1f;
+        }
     }
 }

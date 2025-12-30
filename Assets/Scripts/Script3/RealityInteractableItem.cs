@@ -20,14 +20,15 @@ public class RealityInteractableItem : MonoBehaviour
     [Header("交互设置")]
         public RealityItemType type;
         public GameObject questionMarkIcon;
-    
+
     [Header("对话内容")]
     [TextArea(3, 5)]
     public string interactionText;
     public string speakerName = "主控";
-    
+
     private bool isPlayerNearby = false;
     private bool canInteract = false;
+    private bool isInteracted = false; // 是否已经交互过
     
     private void Start()
     {
@@ -61,26 +62,26 @@ public class RealityInteractableItem : MonoBehaviour
     public void RefreshInteractable()
     {
         bool allowedByState = false;
-        
+
         // 使用RealityGameManager的状态检查
         if (RealityGameManager.Instance != null)
         {
             var state = RealityGameManager.Instance.CurrentState;
-            
+
             switch (type)
             {
                 case RealityItemType.Bed:
                     // 床在Exploring阶段可以调查，在ReadyToSleep阶段可以睡觉喵
                     allowedByState = (state == RealityGameManager.RealityState.Exploring || state == RealityGameManager.RealityState.ReadyToSleep);
                     break;
-                    
+
                 case RealityItemType.Computer:
                 case RealityItemType.Notebook:
                 case RealityItemType.FishDecoration:
                 case RealityItemType.Medicine:
 
-                    // 其他物品在探索阶段可以交互
-                    allowedByState = (state == RealityGameManager.RealityState.Exploring);
+                    // 其他物品在探索阶段可以交互，但只能交互一次
+                    allowedByState = (state == RealityGameManager.RealityState.Exploring) && !isInteracted;
                     break;
             }
         }
@@ -88,11 +89,10 @@ public class RealityInteractableItem : MonoBehaviour
         {
             // 如果没有RealityGameManager，为了测试暂时允许所有交互
             allowedByState = true;
-
         }
-        
+
         canInteract = allowedByState && isPlayerNearby;
-        
+
         // 更新Search图标的显示状态
         if (questionMarkIcon != null)
             questionMarkIcon.SetActive(canInteract);
@@ -101,50 +101,59 @@ public class RealityInteractableItem : MonoBehaviour
     private void OnMouseDown()
     {
         if (!canInteract) return;
-        
+
         // 更精确的检查：只禁止物品交互，不影响UI喵
         if (DialogueManager.instance != null && DialogueManager.instance.IsDialogueActive)
         {
             Debug.Log("对话进行中，禁止物品交互喵～");
             return;
         }
-        
+
         Debug.Log($"点击了: {type}");
-        
+
+        // 标记为已交互
+        isInteracted = true;
+
         // 只调用GameManager，统一管理对话喵
         if (RealityGameManager.Instance != null)
         {
             RealityGameManager.Instance.OnItemInteracted(type);
         }
-        
-        // 移除了独立的对话处理，统一由GameManager管理喵
-        // if (!string.IsNullOrEmpty(interactionText))
-        // {
-        //     ShowInteractionDialogue();
-        // }
+
+        // 销毁Search图标（床除外）
+        if (type != RealityItemType.Bed && questionMarkIcon != null)
+        {
+            Destroy(questionMarkIcon);
+            questionMarkIcon = null;
+        }
+
+        // 刷新可交互状态
+        RefreshInteractable();
     }
     
     private void ShowInteractionDialogue()
     {
-        var dialogue = new DialogueSession
-        {
-            lines = new DialogueLine[]
-            {
-                new DialogueLine{ 
-                    text = interactionText,
-                    speakerName = speakerName
-                }
-            }
-        };
-        
-        if (DialogueManager.instance != null)
-        {
-            DialogueManager.instance.StartDialogue(dialogue);
-        }
-        else
-        {
-            Debug.Log($"交互文本: {interactionText}");
-        }
+        // 这个方法已废弃，所有对话统一由GameManager管理
+        // var dialogue = new DialogueSession
+        // {
+        //     lines = new DialogueLine[]
+        //     {
+        //         new DialogueLine{
+        //             speaker = SpeakerNameOption.MainController,
+        //             portrait = PortraitOption.Child_Neutral,
+        //             text = interactionText
+        //         }
+        //     }
+        // };
+
+        // if (DialogueManager.instance != null)
+        // {
+        //     DialogueManager.instance.StartDialogue(dialogue);
+        // }
+        // else
+        // {
+        //     Debug.Log($"交互文本: {interactionText}");
+        // }
     }
     
     // Editor用的方法：快速添加图标

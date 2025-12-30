@@ -67,71 +67,65 @@ public class CameraFollow : MonoBehaviour
     {
         if (target == null || background == null) return;
 
-        // 1. 确定目标位置
-        // 我们希望相机去哪里？去主角的X，固定的Y，原本的Z
-        Vector3 targetPos = new Vector3(target.position.x, fixedY, transform.position.z);
-
-
-
-        // 2. 限制目标位置 (Clamp)
-        // 【关键优化】在SmoothDamp之前就限制目标位置，确保不会超出边界
-        if (maxX >= minX)
-        {
-            targetPos.x = Mathf.Clamp(targetPos.x, minX, maxX);
-            
-            // 调试输出
-            if (targetPos.x == minX || targetPos.x == maxX)
-            {
-                Debug.Log($"相机到达边界，目标位置: {targetPos.x:F2}");
-            }
-        }
-        else
-        {
-            // 背景太小，相机固定在中心
-            targetPos.x = background.bounds.center.x;
-            Debug.LogWarning("背景比相机视口还小，相机固定在中心");
-        }
-
-
-        // 3. 【完全同步】直接跟随，人物动多少相机就动多少
-        // 计算玩家移动了多少，相机就移动多少
+        // 1. 计算玩家移动量
         Vector3 playerMovement = target.position - lastPlayerPos;
-        
-        // 调试：输出相机跟随的移动量
-        if (Mathf.Abs(playerMovement.x) > 0.001f)
+        lastPlayerPos = target.position;
+
+        // 2. 【核心逻辑】判断相机是否在边界
+        bool isAtLeftEdge = transform.position.x <= minX;  // 相机在左边界
+        bool isAtRightEdge = transform.position.x >= maxX;  // 相机在右边界
+
+        // 3. 【核心逻辑】在边界时的特殊处理
+        if (isAtLeftEdge || isAtRightEdge)
         {
-            Debug.Log($"相机跟随原始: 玩家移动量={playerMovement.x:F6}, 玩家位置={target.position.x:F6}, 上一帧={lastPlayerPos.x:F6}");
+            // 计算人物相对于相机中心的位置
+            float playerRelativeToCam = target.position.x - transform.position.x;
+
+            // 在左边界：人物往左走，相机不动；人物往右走，只有超过中心才动相机
+            if (isAtLeftEdge)
+            {
+                if (playerMovement.x < 0)
+                {
+                    // 人物往左走（继续往外），相机不动
+                    return;
+                }
+                else if (playerRelativeToCam < 0)
+                {
+                    // 人物往右走但还没到中心（中心位置是0），相机不动
+                    return;
+                }
+            }
+
+            // 在右边界：人物往右走，相机不动；人物往左走，只有超过中心才动相机
+            if (isAtRightEdge)
+            {
+                if (playerMovement.x > 0)
+                {
+                    // 人物往右走（继续往外），相机不动
+                    return;
+                }
+                else if (playerRelativeToCam > 0)
+                {
+                    // 人物往左走但还没到中心（中心位置是0），相机不动
+                    return;
+                }
+            }
         }
-        
-        // 计算相机的新位置（直接应用相同的移动量）
+
+        // 4. 正常跟随逻辑（人物动多少，相机动多少）
         Vector3 newCameraPos = transform.position + playerMovement;
-        newCameraPos.y = fixedY; // Y轴保持固定
-        
-        // 4. 【优先处理边界】如果超出边界，先限制移动
-        Vector3 clampedPos = newCameraPos;
+        newCameraPos.y = fixedY;
+
+        // 5. 限制在边界内
         if (maxX >= minX)
         {
-            float originalX = clampedPos.x;
-            clampedPos.x = Mathf.Clamp(clampedPos.x, minX, maxX);
-            
-            // 如果被边界限制了，记录实际移动量
-            if (Mathf.Abs(clampedPos.x - originalX) > 0.001f)
-            {
-                Debug.Log($"相机被边界限制: 计算位置{originalX:F2} → 限制后{clampedPos.x:F2}");
-            }
+            newCameraPos.x = Mathf.Clamp(newCameraPos.x, minX, maxX);
         }
         else
         {
-            clampedPos.x = background.bounds.center.x;
+            newCameraPos.x = background.bounds.center.x;
         }
-        
-        // 5. 【测试】禁用像素对齐，直接使用限制后的位置
-        // 6. 最终位置（人物停止，相机也立即停止）
-        Vector3 finalCameraPos = clampedPos;
 
-        transform.position = finalCameraPos;
-        
-        // 7. 更新玩家位置记录
-        lastPlayerPos = target.position;
+        transform.position = newCameraPos;
     }
 }

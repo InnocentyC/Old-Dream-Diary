@@ -4,32 +4,50 @@ public enum SpeakerNameOption
     None,
     MainController,
 }
+
+// å¹¼å¹´ä¸»è§’è¡¨æƒ…
 public enum PortraitOption
 {
     None,
-    Child_Neutral,  // Ó×ÄêÖ÷¿Ø ÎŞ±íÇé
-    Child_Happy1,   // ¿ªĞÄ1
-    Child_Happy2,   // ¿ªĞÄ2
-    Child_Confused, // ÒÉ»ó
-    Child_Surprised,// ¾ªÑÈ
-    Child_Pout      // ²»Âú/¾ï×ì
+    Child_Neutral,  // å¹¼å¹´ä¸»æ§ æ— è¡¨æƒ…
+    Child_Happy1,   // å¼€å¿ƒ1
+    Child_Happy2,   // å¼€å¿ƒ2
+    Child_Confused, // ç–‘æƒ‘
+    Child_Surprised,// æƒŠè®¶
+    Child_Pout      // ä¸æ»¡/æ’…å˜´
+}
+
+// æˆå¹´ä¸»è§’è¡¨æƒ…
+public enum AdultPortraitOption
+{
+    None,
+    Adult_Neutral,        // MC_6 æ— è¡¨æƒ…
+    Adult_Tired,          // MC_1 ç–²æƒ«
+    Adult_Confused,       // MC_2 ç–‘æƒ‘
+    Adult_Angry,          // ç”Ÿæ°”
+    Adult_Surprised,      // æƒŠè®¶
+    Adult_Confused_Hand   // å›°æƒ‘ï¼ˆå¸¦æ‰‹ï¼‰
 }
 
 [System.Serializable]
 public class DialogueLine
 {
-    [Header("Ëµ»°ÈËÃû×Ö")]
-    public SpeakerNameOption speaker;   // Ê¹ÓÃÏÂÀ­Ã¶¾Ù
+    [Header("è¯´è¯äººåå­—")]
+    public SpeakerNameOption speaker;   // ä½¿ç”¨ä¸‹æ‹‰æšä¸¾
 
-    [Header("µ±Ç°Á¢»æ")]
-    public PortraitOption portrait;    // Ã¿Ò»¾ä¶¼¿ÉÒÔ»»±íÇé
+    [Header("å½“å‰ç«‹ç»˜ï¼ˆå¹¼å¹´ï¼‰")]
+    public PortraitOption portrait;    // æ¯ä¸€å¥éƒ½å¯ä»¥æ¢è¡¨æƒ…
 
-    [Header("¶Ô»°ÄÚÈİ")]
+    [Header("å½“å‰ç«‹ç»˜ï¼ˆæˆå¹´ï¼‰")]
+    public AdultPortraitOption adultPortrait; // æˆå¹´ä¸»è§’ä¸“ç”¨è¡¨æƒ…
+
+    [Header("å¯¹è¯å†…å®¹")]
     [TextArea(3, 10)]
     public string text;
 
     public Sprite GetPortrait(GameManager gm)
     {
+        if (gm == null) return null;
         switch (portrait)
         {
             case PortraitOption.Child_Neutral: return gm.child_neutral;
@@ -41,11 +59,27 @@ public class DialogueLine
             default: return null;
         }
     }
+
+    // æ”¯æŒRealityGameManagerçš„é‡è½½æ–¹æ³•
+    public Sprite GetPortrait(RealityGameManager gm)
+    {
+        if (gm == null) return null;
+
+        // ä¼˜å…ˆä½¿ç”¨æˆå¹´è¡¨æƒ…
+        if (adultPortrait != AdultPortraitOption.None)
+        {
+            return gm.GetPortrait(adultPortrait);
+        }
+
+        // å¦‚æœæ²¡æœ‰è®¾ç½®æˆå¹´è¡¨æƒ…ï¼Œåˆ™ä¸æ˜¾ç¤ºç«‹ç»˜
+        return null;
+    }
+
     public string GetSpeakerName()
     {
         switch (speaker)
         {
-            case SpeakerNameOption.MainController: return "Óêäö";
+            case SpeakerNameOption.MainController: return "é›¨æ¼©";
             default: return "";
         }
     }
@@ -55,5 +89,5 @@ public class DialogueLine
 [System.Serializable]
 public class DialogueSession
 {
-    public DialogueLine[] lines; // ¶Ô»°Êı×é
+    public DialogueLine[] lines; // å¯¹è¯æ•°ç»„
 }

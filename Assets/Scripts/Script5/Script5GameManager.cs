@@ -6,28 +6,51 @@ using System.Collections;
 public class Script5GameManager : MonoBehaviour
 {
     public static Script5GameManager Instance;
-    
+
     [Header("任务UI系统")]
     public GameObject taskUIPanel;
     public TextMeshProUGUI taskText1;  // 第一个任务文本
     public TextMeshProUGUI taskText2;  // 第二个任务文本
-    
+
     [Header("密码本系统")]
     public GameObject diaryCoverUI;  // 密码本封面UI
     public GameObject diaryUI; // 日记本UI
     private DiaryUIManager diaryManager;
-    
+
     [Header("对话系统")]
     public GameObject dialoguePanel;
     public TextMeshProUGUI dialogueText;
     public TextMeshProUGUI speakerNameText;
     public Image speakerPortrait;
-    
+
     [Header("角色立绘")]
     public Sprite adult_confused3;   // MC_3 疑惑
     public Sprite adult_surprised;   // MC_5 惊讶
     public Sprite adult_neutral;    // MC_6 无表情
     public Sprite adult_tired;       // MC_1 疲惫
+
+    // 获取PortraitOption对应的Sprite（为了兼容新的DialogueLine）
+    public Sprite GetPortrait(PortraitOption portraitOption)
+    {
+        switch (portraitOption)
+        {
+            case PortraitOption.Child_Confused: return adult_confused3;
+            case PortraitOption.Child_Surprised: return adult_surprised;
+            case PortraitOption.Child_Neutral: return adult_neutral;
+            default: return null;
+        }
+    }
+
+    // 获取SpeakerName（为了兼容新的DialogueLine）
+    public string GetSpeakerName(SpeakerNameOption speakerOption)
+    {
+        switch (speakerOption)
+        {
+            case SpeakerNameOption.MainController: return "主控";
+            case SpeakerNameOption.None: return "";  // 不显示说话者
+            default: return "";
+        }
+    }
     
     [Header("游戏状态")]
     public bool isDiaryUnlocked = false;
@@ -199,48 +222,54 @@ public class Script5GameManager : MonoBehaviour
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="Angela：「今天提交的报告，需要再优化一下哦。」",
-                    speakerName="电脑屏幕"
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="Angela：「今天提交的报告，需要再优化一下哦。」"
                 },
-                new DialogueLine{ 
-                    text="刘总：「看到消息回一下。」",
-                    speakerName="电脑屏幕"
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="刘总：「看到消息回一下。」"
                 },
-                new DialogueLine{ 
-                    text="工作助手：「您还有9条工作内容未上传，周末也要加油～」",
-                    speakerName="电脑屏幕"
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="工作助手：「您还有9条工作内容未上传，周末也要加油～」"
                 },
-                new DialogueLine{ 
-                    text="群聊：「收到。」",
-                    speakerName="电脑屏幕"
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="群聊：「收到。」"
                 },
-                new DialogueLine{ 
-                    text="群聊：「收到。」",
-                    speakerName="电脑屏幕"
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="群聊：「收到。」"
                 },
-                new DialogueLine{ 
-                    text="雨：「收到。」",
-                    speakerName="电脑屏幕"
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="雨：「收到。」"
                 },
-                new DialogueLine{ 
-                    text="......",
-                    speakerName="主控",
-                    portrait=adult_surprised
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Surprised,
+                    text="......"
                 },
-                new DialogueLine{ 
-                    text="……又来了。",
-                    speakerName="主控",
-                    portrait=adult_surprised
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Surprised,
+                    text="……又来了。"
                 },
-                new DialogueLine{ 
-                    text="烦人的工作。",
-                    speakerName="主控",
-                    portrait=adult_surprised
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Surprised,
+                    text="烦人的工作。"
                 }
             }
         };
-        
+
         ShowDialogue(dialogue);
     }
     
@@ -250,29 +279,29 @@ public class Script5GameManager : MonoBehaviour
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="天色已经那么暗了。",
-                    speakerName="主控",
-                    portrait=adult_neutral
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="天色已经那么暗了。"
                 },
-                new DialogueLine{ 
-                    text="今天的时间好像从未属于我一样。",
-                    speakerName="主控",
-                    portrait=adult_neutral
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="今天的时间好像从未属于我一样。"
                 },
-                new DialogueLine{ 
-                    text="那种被留在旧世界的孤独突然造访。",
-                    speakerName="主控",
-                    portrait=adult_neutral
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="那种被留在旧世界的孤独突然造访。"
                 },
-                new DialogueLine{ 
-                    text="在属于我一个人的房间里，不知道今晚还会不会做梦",
-                    speakerName="主控",
-                    portrait=adult_neutral
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="在属于我一个人的房间里，不知道今晚还会不会做梦"
                 }
             }
         };
-        
+
         ShowDialogue(dialogue);
     }
     
@@ -282,14 +311,14 @@ public class Script5GameManager : MonoBehaviour
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="吃褪黑素好像吃出抗药性来了。……今天吃多少都睡不着吧。",
-                    speakerName="主控",
-                    portrait=adult_neutral
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="吃褪黑素好像吃出抗药性来了。……今天吃多少都睡不着吧。"
                 }
             }
         };
-        
+
         ShowDialogue(dialogue);
     }
     
@@ -299,19 +328,19 @@ public class Script5GameManager : MonoBehaviour
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="我真的写过日记这种东西吗....",
-                    speakerName="主控",
-                    portrait=adult_neutral
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="我真的写过日记这种东西吗...."
                 },
-                new DialogueLine{ 
-                    text="这本日记是幻觉，还是我现在生活的是在梦境。",
-                    speakerName="主控",
-                    portrait=adult_neutral
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="这本日记是幻觉，还是我现在生活的是在梦境。"
                 }
             }
         };
-        
+
         ShowDialogue(dialogue);
     }
     
@@ -321,44 +350,49 @@ public class Script5GameManager : MonoBehaviour
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="妈妈：「未接来电」",
-                    speakerName="手机"
+                new DialogueLine{
+                    speaker=SpeakerNameOption.None,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="手机：妈妈：「未接来电」"
                 },
-                new DialogueLine{ 
-                    text="妈妈：「你已经很久没有和我们说过话了。」",
-                    speakerName="手机"
+                new DialogueLine{
+                    speaker=SpeakerNameOption.None,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="手机：妈妈：「你已经很久没有和我们说过话了。」"
                 },
-                new DialogueLine{ 
-                    text="妈妈：「到底在忙什么呢?」",
-                    speakerName="手机"
+                new DialogueLine{
+                    speaker=SpeakerNameOption.None,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="手机：妈妈：「到底在忙什么呢?」"
                 },
-                new DialogueLine{ 
-                    text="健康监测：「警报！检测到使用者连续14天睡眠不足。」",
-                    speakerName="手机"
+                new DialogueLine{
+                    speaker=SpeakerNameOption.None,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="手机：健康监测：「警报！检测到使用者连续14天睡眠不足。」"
                 },
-                new DialogueLine{ 
-                    text="清理系统：「记忆清理项目更新：请及时配合。」",
-                    speakerName="手机"
+                new DialogueLine{
+                    speaker=SpeakerNameOption.None,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="手机：清理系统：「记忆清理项目更新：请及时配合。」"
                 },
-                new DialogueLine{ 
-                    text="......",
-                    speakerName="主控",
-                    portrait=adult_tired
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="......"
                 },
-                new DialogueLine{ 
-                    text="……好累。",
-                    speakerName="主控",
-                    portrait=adult_tired
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="……好累。"
                 },
-                new DialogueLine{ 
-                    text="如果再睡一觉......还能看到那些..梦吗？",
-                    speakerName="主控",
-                    portrait=adult_tired
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="如果再睡一觉......还能看到那些..梦吗？"
                 }
             }
         };
-        
+
         ShowDialogue(dialogue);
     }
     
@@ -368,14 +402,14 @@ public class Script5GameManager : MonoBehaviour
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="可能是太累了，毕竟刚进入新城区工作，我还要成为新城区的公民。",
-                    speakerName="主控",
-                    portrait=adult_neutral
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Neutral,
+                    text="可能是太累了，毕竟刚进入新城区工作，我还要成为新城区的公民。"
                 }
             }
         };
-        
+
         ShowDialogue(dialogue, () => {
             // 转场 入睡动画 DH_001_MP4
             Debug.Log("播放入睡动画 DH_001_MP4");
@@ -389,24 +423,24 @@ public class Script5GameManager : MonoBehaviour
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="刚刚那些是记忆？还是……梦？好真实......",
-                    speakerName="主控",
-                    portrait=adult_confused3 // MC_3
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Confused,
+                    text="刚刚那些是记忆？还是……梦？好真实......"
                 },
-                new DialogueLine{ 
-                    text="好像在梦中得到了密码本的密码。",
-                    speakerName="主控",
-                    portrait=adult_confused3 // MC_3
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Confused,
+                    text="好像在梦中得到了密码本的密码。"
                 },
-                new DialogueLine{ 
-                    text="试试看吧。",
-                    speakerName="主控",
-                    portrait=adult_confused3 // MC_3
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Confused,
+                    text="试试看吧。"
                 }
             }
         };
-        
+
         ShowDialogue(dialogue);
     }
     
@@ -477,35 +511,35 @@ public class Script5GameManager : MonoBehaviour
         {
             diaryCoverUI.SetActive(true);
         }
-        
+
         // 2. 显示密码本解锁对话
         var dialogue = new DialogueSession
         {
             lines = new DialogueLine[]
             {
-                new DialogueLine{ 
-                    text="5，2，8....",
-                    speakerName="主控",
-                    portrait=adult_surprised // MC_5
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Surprised,
+                    text="5，2，8...."
                 },
-                new DialogueLine{ 
-                    text="密码本打开了！",
-                    speakerName="主控",
-                    portrait=adult_surprised // MC_5
+                new DialogueLine{
+                    speaker=SpeakerNameOption.MainController,
+                    portrait=PortraitOption.Child_Surprised,
+                    text="密码本打开了！"
                 }
             }
         };
-        
+
         ShowDialogue(dialogue, () => {
             // 3. 对话结束后，关闭封面，显示展开的日记本
             if (diaryCoverUI != null)
                 diaryCoverUI.SetActive(false);
-                
+
             if (diaryManager != null)
                 diaryManager.ShowDiary();
             else if (diaryUI != null)
                 diaryUI.SetActive(true);
-                
+
             // 4. 标记日记已解锁
             isDiaryUnlocked = true;
         });
@@ -538,48 +572,18 @@ public class Script5GameManager : MonoBehaviour
             lines = new DialogueLine[] { line }
         });
     }
-    
+
     public void ShowDialogue(DialogueSession session, System.Action onComplete = null)
     {
-        if (dialoguePanel == null) return;
-        
-        dialoguePanel.SetActive(true);
-        StartCoroutine(DisplayDialogueSequence(session, onComplete));
-    }
-    
-    private IEnumerator DisplayDialogueSequence(DialogueSession session, System.Action onComplete = null)
-    {
-        foreach (var line in session.lines)
+        if (DialogueManager.instance == null)
         {
-            if (speakerNameText != null)
-                speakerNameText.text = line.speakerName;
-                
-            if (speakerPortrait != null && line.portrait != null)
-                speakerPortrait.sprite = line.portrait;
-                
-            if (dialogueText != null)
-            {
-                // 打字机效果
-                yield return StartCoroutine(TypeText(dialogueText, line.text));
-                
-                // 等待玩家点击继续
-                yield return new WaitUntil(() => Input.GetMouseButtonDown(0));
-                yield return null; // 等待一帧避免连续触发
-            }
+            Debug.LogWarning("未找到DialogueManager实例");
+            onComplete?.Invoke();
+            return;
         }
-        
-        dialoguePanel.SetActive(false);
-        onComplete?.Invoke();
-    }
-    
-    private IEnumerator TypeText(TextMeshProUGUI textComponent, string text)
-    {
-        textComponent.text = "";
-        foreach (char c in text)
-        {
-            textComponent.text += c;
-            yield return new WaitForSeconds(0.05f);
-        }
+
+        // 使用统一的DialogueManager来显示对话
+        DialogueManager.instance.StartDialogue(session, onComplete);
     }
     
     // UI按钮事件
