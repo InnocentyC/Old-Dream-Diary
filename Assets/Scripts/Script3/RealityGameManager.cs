@@ -54,6 +54,12 @@ public class RealityGameManager : MonoBehaviour
     [Header("视频播放")]
     public GameObject videoPlayerObject;  // VideoPlayer 所在的游戏对象
     public UnityEngine.Video.VideoPlayer videoPlayer;  // VideoPlayer 组件
+    public GameObject videoDisplayImage;   // 显示视频的 RawImage 对象
+
+    [Header("童年记忆闪回")]
+    public Sprite[] childhoodBackgrounds;  // 三张童年房间背景图
+    public GameObject backgroundDisplay;   // 显示背景图的Image对象（RawImage或Image组件）
+    public GameObject playerCharacter;      // 玩家角色游戏对象
     
     private void Awake()
     {
@@ -396,54 +402,80 @@ public class RealityGameManager : MonoBehaviour
             yield return null;
         }
 
-        // 画面短暂出现花屏，闪过童年房间
-        Debug.Log("播放花屏效果");
-
-        // 等待花屏效果
-        yield return new WaitForSeconds(1.0f);
-
-        // 播放童年房间动画 DH_002.MP4
-        Debug.Log("播放童年房间动画 DH_002.MP4");
-        Debug.Log($"videoPlayerObject: {(videoPlayerObject != null ? videoPlayerObject.name : "null")}");
-        Debug.Log($"videoPlayer: {(videoPlayer != null ? "not null" : "null")}");
-
         // 禁用玩家控制
         SetUIBlocking(true);
 
-        // 播放视频
-        if (videoPlayerObject != null && videoPlayer != null)
+        // 等待0.5秒
+        yield return new WaitForSeconds(0.5f);
+
+        // 隐藏玩家角色（但保持在原位，相机跟随依然有效）
+        if (playerCharacter != null)
         {
-            Debug.Log("开始播放视频");
-            videoPlayerObject.SetActive(true);
-
-            // 准备视频（确保视频加载完成）
-            videoPlayer.Prepare();
-
-            // 等待视频准备好
-            while (!videoPlayer.isPrepared)
-            {
-                yield return null;
-            }
-
-            // 开始播放
-            videoPlayer.Play();
-
-            Debug.Log($"视频长度: {videoPlayer.length} 秒");
-
-            // 使用视频长度 + 少量缓冲时间来等待
-            float waitTime = (float)videoPlayer.length + 0.5f;
-            Debug.Log($"等待视频播放 {waitTime} 秒");
-
-            yield return new WaitForSeconds(waitTime);
-
-            Debug.Log("视频播放完成");
-
-            // 隐藏视频
-            videoPlayerObject.SetActive(false);
+            playerCharacter.SetActive(false);
+            Debug.Log("玩家角色已隐藏");
         }
         else
         {
-            Debug.LogWarning("未找到 videoPlayerObject 或 videoPlayer，跳过视频播放");
+            Debug.LogWarning("未找到玩家角色游戏对象！");
+        }
+
+        // 显示背景图显示对象
+        if (backgroundDisplay != null)
+        {
+            backgroundDisplay.SetActive(true);
+            Debug.Log("背景图显示对象已激活");
+        }
+        else
+        {
+            Debug.LogWarning("未找到背景图显示对象！");
+        }
+
+        // 检查是否有三张童年背景图
+        if (childhoodBackgrounds == null || childhoodBackgrounds.Length < 3)
+        {
+            Debug.LogError("童年背景图数量不足，需要至少3张！");
+        }
+        else
+        {
+            // 获取Image或RawImage组件
+            var imageComponent = backgroundDisplay.GetComponent<UnityEngine.UI.Image>();
+            var rawImageComponent = backgroundDisplay.GetComponent<UnityEngine.UI.RawImage>();
+
+            // 每0.3秒切换一张背景图，共三张
+            for (int i = 0; i < childhoodBackgrounds.Length; i++)
+            {
+                Debug.Log($"显示童年背景图 {i + 1}/3: {childhoodBackgrounds[i].name}");
+
+                if (imageComponent != null)
+                {
+                    // 创建Sprite
+                    imageComponent.sprite = childhoodBackgrounds[i];
+                }
+                else if (rawImageComponent != null)
+                {
+                    // RawImage需要使用Sprite
+                    rawImageComponent.texture = childhoodBackgrounds[i].texture;
+                }
+
+                yield return new WaitForSeconds(0.3f);
+            }
+        }
+
+        // 最后一张显示0.3秒后，隐藏背景图显示对象，恢复玩家角色可见
+        yield return new WaitForSeconds(0.3f);
+
+        // 隐藏背景图显示对象
+        if (backgroundDisplay != null)
+        {
+            backgroundDisplay.SetActive(false);
+            Debug.Log("背景图显示对象已隐藏");
+        }
+
+        // 恢复玩家角色可见
+        if (playerCharacter != null)
+        {
+            playerCharacter.SetActive(true);
+            Debug.Log("玩家角色已恢复可见");
         }
 
         // 启用玩家控制
