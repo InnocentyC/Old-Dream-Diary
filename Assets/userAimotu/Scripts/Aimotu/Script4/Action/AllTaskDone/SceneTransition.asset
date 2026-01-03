@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: SceneTransition
   m_EditorClassIdentifier: 
   triggerState: 5
-  targetSceneName: Script7
-  fadeDuration: 1
+  targetSceneName: Script6
+  fadeDuration: 10
   playerSpawnPos: {x: 0, y: 0, z: 0}

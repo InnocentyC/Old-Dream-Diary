@@ -34,27 +34,40 @@ public class TaskUIAction : StateAction
                 break;
             }
         }
-        if (gm != null && gm.TaskS4 != null)
+        if (gm != null && gm.TaskModuleObject != null)
         {
+            GameObject taskObj = gm.TaskModuleObject;
             // 直接操作拖进去的那个物体
-            gm.TaskS4.gameObject.SetActive(true);
-
-            if (onlyShowUI)
+            if (stage == DreamStage.Dream1)
             {
-                gm.TaskS4.ShowTaskUI();
-                Debug.Log("<color=cyan>[Action]</color> TaskUI 已通过 GM 引用激活");
-            }
-            else
-            {
-                if (isDiary) gm.TaskS4.diaryCollected = true;
-                else gm.TaskS4.CollectPassword(collectType);
+                var taskS4 = taskObj.GetComponent<S4.Task_S4>();
+                if (taskS4 != null)
+                {
+                    if (onlyShowUI) taskS4.ShowTaskUI();
+                    else
+                    {
+                        if (isDiary) taskS4.diaryCollected = true;
+                        else taskS4.CollectPassword(collectType);
 
-                gm.TaskS4.UpdateUI();
+                        taskS4.UpdateUI();
+                    }
+
+                }
             }
-        }
-        else
-        {
-            Debug.LogError("TaskUIAction 错误：GameManager 中未拖入 Task_S4 引用！");
+            else if (stage == DreamStage.Dream2)
+            {
+                // 梦境 2：寻找 S6 脚本
+                var taskS6 = taskObj.GetComponent<S6.Task_S6>();
+                if (taskS6 != null)
+                {
+                    if (onlyShowUI) taskS6.ShowTaskUI();
+                    else
+                    {
+                        // 使用我们在 Task_S6 里定义的数组逻辑
+                        taskS6.CollectDiary(diaryIndexD2, diaryNameD2);
+                    }
+                }
+            }
         }
         yield break;
     }

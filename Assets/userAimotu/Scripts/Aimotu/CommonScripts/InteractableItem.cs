@@ -42,6 +42,7 @@ using System.Collections.Generic;
         private IGameManager GetManager()
         {
             if (S4.GameManager.Instance != null) return S4.GameManager.Instance;
+            if (S6.GameManager.Instance != null) return S6.GameManager.Instance;
 
             // 如果单例没拿到，再尝试全局找一次
             return Object.FindAnyObjectByType<S4.GameManager>();

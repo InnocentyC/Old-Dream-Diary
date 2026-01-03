@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4c91a09956e4d442a8cbc02c1723352, type: 3}
   m_Name: SetState
   m_EditorClassIdentifier: 
-  triggerState: 2
+  triggerState: 7
   nextState: 3

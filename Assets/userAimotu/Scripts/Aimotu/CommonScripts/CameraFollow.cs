@@ -98,4 +98,28 @@ public class CameraFollow : MonoBehaviour
 
         transform.position = Vector3.SmoothDamp(transform.position, targetPos, ref velocity, smoothTime);
     }
+    // 在 CameraFollow 类中添加
+    public void UpdateBackground(SpriteRenderer newBackground)
+    {
+        background = newBackground;
+
+        // 重新计算边界逻辑
+        if (background != null)
+        {
+            Bounds bgBounds = background.bounds;
+            fixedY = bgBounds.center.y;
+
+            // 强制立刻更新一次计算，防止 LateUpdate 还没跑导致闪烁
+            float camHalfWidth = GetComponent<Camera>().orthographicSize * GetComponent<Camera>().aspect;
+            minX = bgBounds.min.x + camHalfWidth;
+            maxX = bgBounds.max.x - camHalfWidth;
+
+            // 可选：让相机瞬间移动到目标位置，防止从卧室“飞”到街道
+            Vector3 targetPos = new Vector3(target.position.x, fixedY, transform.position.z);
+            if (maxX >= minX) targetPos.x = Mathf.Clamp(targetPos.x, minX, maxX);
+            else targetPos.x = bgBounds.center.x;
+
+            transform.position = targetPos;
+        }
+    }
 }

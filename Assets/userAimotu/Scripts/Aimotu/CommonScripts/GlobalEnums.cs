@@ -25,7 +25,9 @@ public enum RoomState
     AllTasksDone,
     ReadyToExit,
     // --- S6 »ò ÃÎ¾³×´Ì¬ ---
+    S6_Bedroom_Intro,
     Dream2_Bedroom,
+    ReadyToStreet,
     Dream2_Street,
     Dream2_TaskCompleted,
     ReadyToS7

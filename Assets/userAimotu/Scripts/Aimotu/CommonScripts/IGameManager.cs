@@ -24,8 +24,6 @@ public interface IGameManager
     bool IsUIBlocking { get; }
 
     Coroutine StartCoroutine(IEnumerator routine);    // 如果需要切换状态，可以加这个
-    S4.Task_S4 TaskS4 { get; } // 新增：任务UI组件的引用
-//S6.Task_S6 TaskS6 { get; } // 新增：任务UI组件的引用
-    void PlayGlobalSFX(AudioClip clip);
-
+    GameObject TaskModuleObject { get; }
+    void PlayGlobalSFX(AudioClip clip, float volume = 1.0f);
 }

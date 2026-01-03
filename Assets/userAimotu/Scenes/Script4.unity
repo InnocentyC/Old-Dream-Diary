@@ -4341,6 +4341,7 @@ GameObject:
   - component: {fileID: 1576953280}
   - component: {fileID: 1576953282}
   - component: {fileID: 1576953283}
+  - component: {fileID: 1576953284}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -4416,15 +4417,7 @@ MonoBehaviour:
   _uiVideoPlayer: {fileID: 53924601}
   _uiRenderTexture: {fileID: 8400000, guid: 218264d0fef85f448baec61fd85f6990, type: 2}
   _transitionMaskGroup: {fileID: 2022238942}
-  stateActionSettings:
-  - state: 1
-    actions:
-    - {fileID: 11400000, guid: 01ef02dad7c7dc845b352bbb9bf8b1c5, type: 2}
-    - {fileID: 11400000, guid: ae23a81fa21b3c64c86ced5b20ab6f37, type: 2}
-    - {fileID: 11400000, guid: 7d33707a978212649b393ac2a56ee4ff, type: 2}
-    - {fileID: 11400000, guid: ae23a81fa21b3c64c86ced5b20ab6f37, type: 2}
-    - {fileID: 11400000, guid: 7ac8a59537c97f344af4d9a52263d137, type: 2}
-    - {fileID: 11400000, guid: 253bf8c9c5853c2499e0274b28f11620, type: 2}
+  stateActionSettings: []
   task1: {fileID: 0}
   uiBlockCount: 0
   dialogueManager: {fileID: 223367415}
@@ -4455,6 +4448,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5ce7114c0fce2a4ebd1cfa53e45f783, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1576953284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1576953277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce802e7c4ce745044ba88f858f39fc74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeScreen: {fileID: 2022238942}
+  musicSource: {fileID: 1606480128}
+  fadeDuration: 3
 --- !u!1 &1586963481
 GameObject:
   m_ObjectHideFlags: 0
@@ -4703,7 +4711,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 613b07287e92d89408d93a57e41ac2cc, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1

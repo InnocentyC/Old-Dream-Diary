@@ -15,6 +15,8 @@ namespace S4
         public PlayClipAction playClipAction;
         [Header("UI 引用绑定")]
         public Task_S4 taskS4_Instance; // 在 Unity Inspector 里把 Hierarchy 里的 TaskUI 拖到这里
+     
+        public GameObject TaskModuleObject => taskS4_Instance != null ? taskS4_Instance.gameObject : null;
         [Header("音效中心")]
         public AudioSource sfxSource;
         // 实现接口属性
@@ -173,12 +175,12 @@ namespace S4
         }
 
         #endregion
-        public void PlayGlobalSFX(AudioClip clip)
+        public void PlayGlobalSFX(AudioClip clip, float volume = 1.0f)
         {
-            if (clip != null && sfxSource != null)
-            {
-                sfxSource.PlayOneShot(clip);
-            }
+            if (clip == null || sfxSource == null) return;
+
+            // PlayOneShot 的第二个参数就是音量比例 (0.0 到 1.0)
+            sfxSource.PlayOneShot(clip, volume);
         }
 
     }
