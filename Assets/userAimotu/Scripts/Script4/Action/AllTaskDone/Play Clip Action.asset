@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e25932e895610f442a8a9feb0ba92796, type: 3}
+  m_Name: Play Clip Action
+  m_EditorClassIdentifier: Assembly-CSharp::PlayClipAction
+  triggerState: 5
+  useFadeIn: 1
+  useFadeOut: 0
+  fadeSpeed: 1
+  videoClip: {fileID: 32900000, guid: c0cbd937e6aa7e74db7f8ec7ff662f0a, type: 3}
+  transitionSFX: {fileID: 8300000, guid: 613b07287e92d89408d93a57e41ac2cc, type: 3}
+  waitForClip: 1
+  loopVideo: 0
+  enableDebugLog: 1
