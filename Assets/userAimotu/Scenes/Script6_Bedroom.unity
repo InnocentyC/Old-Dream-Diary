@@ -992,7 +992,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
   m_SortingOrder: 400
   m_TargetDisplay: 0
@@ -1437,14 +1437,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.8352941, b: 0.30980393, a: 0.30588236}
+  m_Color: {r: 0.8773585, g: 0.63182527, b: 0.30210927, a: 0.30588236}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2a15aac2d79fec34fb97690e10f24284, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 85d0b5f409a82ba4e85888be0cb2ac1d, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -1747,7 +1747,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   passwordTaskText: {fileID: 301002196}
   diaryTaskText: {fileID: 1840068381}
-  diaryCollected: 0
 --- !u!1 &400223723
 GameObject:
   m_ObjectHideFlags: 0
@@ -2096,6 +2095,7 @@ GameObject:
   - component: {fileID: 536721209}
   - component: {fileID: 536721210}
   - component: {fileID: 536721211}
+  - component: {fileID: 536721212}
   m_Layer: 5
   m_Name: stickynote
   m_TagString: Interactable
@@ -2122,7 +2122,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -106.78, y: -19.8}
+  m_AnchoredPosition: {x: -170, y: 75}
   m_SizeDelta: {x: 131.7, y: 140.9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &536721205
@@ -2238,7 +2238,7 @@ MonoBehaviour:
   questionMarkIcon: {fileID: 0}
   defaultActions: []
   stateSpecificEvents: []
-  clickSFX: {fileID: 8300000, guid: c5d8e70ff9c080a42a041d52eeb872af, type: 3}
+  clickSFX: {fileID: 0}
 --- !u!114 &536721211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2253,10 +2253,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sequence:
   - {fileID: 11400000, guid: f7ae9c348fa99614da4e01544ac449dc, type: 2}
+  - {fileID: 11400000, guid: cd0f12db5797dd94a8ef12797d48f30a, type: 2}
   - {fileID: 11400000, guid: 0577dc18ad93c9445bc9702511fda3ce, type: 2}
   - {fileID: 11400000, guid: d108f938202679e4182002e21583b189, type: 2}
   - {fileID: 11400000, guid: 1f2912cf41449ce43a0435ec8fbad66e, type: 2}
-  - {fileID: 11400000, guid: cd0f12db5797dd94a8ef12797d48f30a, type: 2}
+--- !u!114 &536721212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 536721202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a55703ddc49b02438de66df72feb80d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &555999402
 GameObject:
   m_ObjectHideFlags: 0
@@ -2637,7 +2649,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 2a15aac2d79fec34fb97690e10f24284, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 85d0b5f409a82ba4e85888be0cb2ac1d, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -3805,15 +3817,15 @@ SpriteRenderer:
   m_SortingLayerID: 1980527871
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 9114483c656e24841b8e80ef1aad8948, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 7d9ea25d87f09664d9ab45d79ee75ad2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.69, y: 1.59}
+  m_Size: {x: 0.6, y: 1.61}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1310276389
@@ -3880,8 +3892,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.67, y: 1.57}
-    newSize: {x: 0.69, y: 1.59}
+    oldSize: {x: 0.6, y: 1.61}
+    newSize: {x: 0.6, y: 1.61}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -4220,14 +4232,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.9921569, g: 0.9921569, b: 1, a: 1}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: dab1aa2f89358fb4493dbc8214380f35, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -4339,7 +4351,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1576953279}
   - component: {fileID: 1576953280}
-  - component: {fileID: 1576953282}
+  - component: {fileID: 1576953284}
   - component: {fileID: 1576953283}
   m_Layer: 0
   m_Name: GameManager
@@ -4396,53 +4408,6 @@ VideoPlayer:
   m_WaitForFirstFrame: 0
   m_FrameReadyEventEnabled: 0
   m_VideoShaders: []
---- !u!114 &1576953282
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1576953277}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b92139ed953eb3249bfb8e9ced48b949, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Name: "\u96E8\u6F29"
-  playClipAction: {fileID: 0}
-  taskS4_Instance: {fileID: 392834804}
-  sfxSource: {fileID: 1606480128}
-  _uiRawImage: {fileID: 1331166207}
-  _uiVideoPlayer: {fileID: 53924601}
-  _uiRenderTexture: {fileID: 8400000, guid: 218264d0fef85f448baec61fd85f6990, type: 2}
-  _transitionMaskGroup: {fileID: 2022238942}
-  stateActionSettings:
-  - state: 1
-    actions:
-    - {fileID: 11400000, guid: 01ef02dad7c7dc845b352bbb9bf8b1c5, type: 2}
-    - {fileID: 11400000, guid: ae23a81fa21b3c64c86ced5b20ab6f37, type: 2}
-    - {fileID: 11400000, guid: 7d33707a978212649b393ac2a56ee4ff, type: 2}
-    - {fileID: 11400000, guid: ae23a81fa21b3c64c86ced5b20ab6f37, type: 2}
-    - {fileID: 11400000, guid: 7ac8a59537c97f344af4d9a52263d137, type: 2}
-    - {fileID: 11400000, guid: 253bf8c9c5853c2499e0274b28f11620, type: 2}
-  task1: {fileID: 0}
-  uiBlockCount: 0
-  dialogueManager: {fileID: 223367415}
-  roomStateEvents:
-  - triggerState: 1
-    actions:
-    - {fileID: 11400000, guid: 01ef02dad7c7dc845b352bbb9bf8b1c5, type: 2}
-    - {fileID: 11400000, guid: ae23a81fa21b3c64c86ced5b20ab6f37, type: 2}
-    - {fileID: 11400000, guid: 7d33707a978212649b393ac2a56ee4ff, type: 2}
-    - {fileID: 11400000, guid: ae23a81fa21b3c64c86ced5b20ab6f37, type: 2}
-    - {fileID: 11400000, guid: 7ac8a59537c97f344af4d9a52263d137, type: 2}
-    - {fileID: 11400000, guid: 253bf8c9c5853c2499e0274b28f11620, type: 2}
-  child_neutral: {fileID: 21300000, guid: 74665b29e4017814da936b25358bf491, type: 3}
-  child_happy1: {fileID: 21300000, guid: 77d0cff24627b814386963dc34444155, type: 3}
-  child_happy2: {fileID: 21300000, guid: 058d795b1523ae14aa2f1b366356efb8, type: 3}
-  child_confused: {fileID: 21300000, guid: d5c93d1fb5ae4a84992b4e281a59715d, type: 3}
-  child_surprised: {fileID: 21300000, guid: e565b6bf4116f0a4c9cb5b9cfe702113, type: 3}
-  child_pout: {fileID: 21300000, guid: a1dec3b71ca59c948a098aafd4c192c9, type: 3}
 --- !u!114 &1576953283
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4455,6 +4420,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5ce7114c0fce2a4ebd1cfa53e45f783, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1576953284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1576953277}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b92139ed953eb3249bfb8e9ced48b949, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: 
+  playClipAction: {fileID: 0}
+  uiRawImage: {fileID: 0}
+  uiVideoPlayer: {fileID: 0}
+  uiRenderTexture: {fileID: 0}
+  transitionMaskGroup: {fileID: 0}
+  uiBlockCount: 0
+  dialogueManager: {fileID: 0}
+  taskManager: {fileID: 0}
+  roomStateEvents: []
+  child_neutral: {fileID: 0}
+  child_happy1: {fileID: 0}
+  child_happy2: {fileID: 0}
+  child_confused: {fileID: 0}
+  child_surprised: {fileID: 0}
+  child_pout: {fileID: 0}
 --- !u!1 &1586963481
 GameObject:
   m_ObjectHideFlags: 0
@@ -4484,7 +4477,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 17c5f452122a47c44807fb2d7fea6c8e, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.83
+  m_Volume: 0.26
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -4600,7 +4593,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1602432801
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4814,14 +4807,14 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1631194119}
-  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.82, y: 1.82, z: 1.82}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1602432801}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 114.9}
@@ -4847,7 +4840,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9afa158e0a59e5a4ca181cad86972dbd, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1c8b2afad5d25084bb8d8c46452f3777, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1
@@ -5562,7 +5555,7 @@ MonoBehaviour:
   questionMarkIcon: {fileID: 694809651}
   defaultActions: []
   stateSpecificEvents:
-  - triggerState: 2
+  - triggerState: 6
     actions:
     - {fileID: 11400000, guid: fe3a7dde322606e4b8d87a10c6cace2e, type: 2}
     - {fileID: 11400000, guid: f733383d6e652a74893240ed057d0c8e, type: 2}

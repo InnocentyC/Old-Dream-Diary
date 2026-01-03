@@ -123,6 +123,66 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &565370019
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 565370021}
+  - component: {fileID: 565370020}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &565370020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 565370019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b92139ed953eb3249bfb8e9ced48b949, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Name: 
+  playClipAction: {fileID: 0}
+  uiRawImage: {fileID: 0}
+  uiVideoPlayer: {fileID: 0}
+  uiRenderTexture: {fileID: 0}
+  transitionMaskGroup: {fileID: 0}
+  uiBlockCount: 0
+  dialogueManager: {fileID: 0}
+  taskManager: {fileID: 0}
+  roomStateEvents: []
+  child_neutral: {fileID: 0}
+  child_happy1: {fileID: 0}
+  child_happy2: {fileID: 0}
+  child_confused: {fileID: 0}
+  child_surprised: {fileID: 0}
+  child_pout: {fileID: 0}
+--- !u!4 &565370021
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 565370019}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8.95, y: -2.2153978, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &637653267
 GameObject:
   m_ObjectHideFlags: 0
@@ -181,7 +241,7 @@ SpriteRenderer:
   m_SortingLayerID: 1128938293
   m_SortingLayer: 1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 1c2ab12e177a99341b5d0adcafe4502f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e877fe81219a34d4caa4472e51de209e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -326,6 +386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+  footstepSource: {fileID: 0}
   background: {fileID: 637653267}
 --- !u!212 &1595248970
 SpriteRenderer:
@@ -376,7 +437,7 @@ SpriteRenderer:
   m_Size: {x: 20, y: 20}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &1595248971
